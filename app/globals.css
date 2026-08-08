@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reusable component classes */
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .input-field {
+    @apply block w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-sm transition
+      placeholder:text-slate-400
+      focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30
+      disabled:cursor-not-allowed disabled:bg-slate-100;
+  }
+
+  .input-prefix {
+    @apply pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition
+      focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
+  }
+
+  .btn-ghost {
+    @apply btn bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:ring-indigo-500;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-slate-700;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl;
+  }
+}
+
+/* Article / prose tweaks for SEO content blocks */
+.prose-article {
+  @apply mx-auto max-w-3xl;
+}
+.prose-article h2 {
+  @apply mt-12 mb-4 text-2xl font-bold tracking-tight text-slate-900;
+  scroll-margin-top: 6rem;
+}
+.prose-article h3 {
+  @apply mt-8 mb-3 text-xl font-semibold text-slate-900;
+  scroll-margin-top: 6rem;
+}
+.prose-article p {
+  @apply mb-4 leading-relaxed text-slate-700;
+}
+.prose-article ul {
+  @apply mb-4 list-disc space-y-2 pl-6 text-slate-700;
+}
+.prose-article ol {
+  @apply mb-4 list-decimal space-y-2 pl-6 text-slate-700;
+}
+.prose-article li {
+  @apply leading-relaxed;
+}
+.prose-article a {
+  @apply font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-2 hover:text-indigo-700;
+}
+.prose-article table {
+  @apply my-6 w-full border-collapse overflow-hidden rounded-lg text-sm;
+}
+.prose-article thead {
+  @apply bg-slate-100 text-left text-slate-700;
+}
+.prose-article th {
+  @apply px-4 py-3 font-semibold;
+}
+.prose-article td {
+  @apply border-t border-slate-200 px-4 py-3 text-slate-700;
+}
+.prose-article tbody tr:nth-child(even) {
+  @apply bg-slate-50/60;
+}
+.prose-article blockquote {
+  @apply my-6 border-l-4 border-indigo-200 bg-indigo-50/60 py-3 pl-4 pr-4 text-slate-700;
+}
+.prose-article strong {
+  @apply font-semibold text-slate-900;
+}
