@@ -9,7 +9,7 @@ const calc = calculators.find((c) => c.slug === 'stripe-fee-calculator')!;
 export const metadata: Metadata = {
   title: 'Stripe Fee Calculator (2025) — Domestic, International & ACH + Reverse',
   description:
-    'Free Stripe fee calculator. See domestic (2.9% + $0.30), international (+1.5%), and ACH (0.8% capped at $5) fees, plus a reverse calculator to find the invoice total to charge.',
+    'Calculate Stripe processing fees for credit card, international, and ACH payments. Reverse-calculate invoice amounts to ensure exact net payouts.',
   keywords: [
     'stripe fee calculator',
     'stripe processing fee',

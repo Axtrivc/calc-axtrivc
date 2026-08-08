@@ -4,7 +4,7 @@ export const siteConfig = {
   domain: 'calc.axtrivc.com',
   url: 'https://calc.axtrivc.com',
   description:
-    'Free, accurate financial and business calculators for freelancers, startups, and SMBs. Calculate Stripe fees, freelance hourly rates, SaaS runway, and LLC vs C-Corp taxes in seconds.',
+    'Free financial & business calculators for freelancers, startups, and SMBs. Instantly estimate Stripe fees, hourly rates, runway, and tax savings.',
   ogImage: '/og-image.png',
   twitter: '@calc_axtrivc',
 };

@@ -9,7 +9,7 @@ const calc = calculators.find((c) => c.slug === 'saas-runway-calculator')!;
 export const metadata: Metadata = {
   title: 'SaaS Runway Calculator — Cash Burn, MRR & Months Left (2025)',
   description:
-    'Free SaaS runway calculator. Enter cash balance, gross burn, MRR, and growth rate to see exactly how many months of runway you have left, with a month-by-month cash chart.',
+    'Project your startup cash runway and burn rate in months. Model revenue growth, monthly expenses, and break-even MRR with interactive charts.',
   keywords: [
     'saas runway calculator',
     'startup runway',

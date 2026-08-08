@@ -9,7 +9,7 @@ const calc = calculators.find((c) => c.slug === 'freelance-hourly-rate-calculato
 export const metadata: Metadata = {
   title: 'Freelance Hourly Rate Calculator — Find Your Ideal Rate (2025)',
   description:
-    'Calculate your ideal freelance hourly and day rate. Enter target income, expenses, tax rate, vacation days, and weekly billable hours. Free, accurate, no sign-up.',
+    'Calculate your ideal freelance hourly and day rate based on target annual income, business expenses, tax obligations, and billable work hours.',
   keywords: [
     'freelance hourly rate calculator',
     'freelance rate',

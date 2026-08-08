@@ -9,7 +9,7 @@ const calc = calculators.find((c) => c.slug === 'llc-vs-ccorp-tax-calculator')!;
 export const metadata: Metadata = {
   title: 'LLC vs C-Corp Tax Calculator (2025) — Compare Federal Taxes',
   description:
-    'Compare LLC (self-employment + income tax with QBI deduction) vs C-Corp (21% corporate tax + dividend tax) at any profit level. Free, accurate 2025 federal model. Not tax advice.',
+    'Compare business tax liabilities between LLC and C-Corp entity structures. Calculate self-employment, corporate, and dividend taxes accurately.',
   keywords: [
     'llc vs c corp calculator',
     'llc vs c corp tax',
