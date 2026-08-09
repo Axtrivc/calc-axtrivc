@@ -71,6 +71,24 @@ module.exports = {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        'scanline': {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(2000%)' },
+        },
+        'blink': {
+          '0%, 49%': { opacity: '1' },
+          '50%, 100%': { opacity: '0' },
+        },
+        'sweep': {
+          '0%': { transform: 'translateX(-100%)', opacity: '0' },
+          '20%': { opacity: '1' },
+          '80%': { opacity: '1' },
+          '100%': { transform: 'translateX(100%)', opacity: '0' },
+        },
+        'sparkline-draw': {
+          '0%': { strokeDashoffset: '200' },
+          '100%': { strokeDashoffset: '0' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
@@ -79,6 +97,10 @@ module.exports = {
         'slide-in-right': 'slide-in-right 0.35s ease-out forwards',
         'pulse-glow': 'pulse-glow 2.5s ease-in-out infinite',
         'grid-drift': 'grid-drift 20s linear infinite',
+        'scanline': 'scanline 4s linear infinite',
+        'blink': 'blink 1s step-end infinite',
+        'sweep': 'sweep 3.5s ease-in-out infinite',
+        'sparkline-draw': 'sparkline-draw 1.6s ease-out forwards',
       },
     },
   },

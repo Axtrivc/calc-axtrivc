@@ -1,19 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import {
   CreditCard,
   Clock,
   TrendingUp,
   Building2,
-  Search,
   ArrowRight,
   ShieldCheck,
   Zap,
+  Cpu,
+  Activity,
+  Wifi,
   type LucideIcon,
 } from 'lucide-react';
 import { calculators, type Calculator } from '@/lib/site';
+import {
+  StripeMiniWidget,
+  FreelanceMiniWidget,
+  RunwayMiniWidget,
+  TaxMiniWidget,
+} from '@/components/HomeWidgets';
 
 const iconMap: Record<string, LucideIcon> = {
   CreditCard,
@@ -28,36 +36,44 @@ const accentMap: Record<
   { glow: string; grad: string; chip: string; bar: string; text: string }
 > = {
   indigo: {
-    glow: 'group-hover:shadow-glow-cyan',
+    glow: 'group-hover:shadow-[0_0_25px_rgba(0,242,254,0.2)]',
     grad: 'from-cyan-500 to-blue-600',
-    chip: 'bg-cyan-500/10 text-cyan-300 ring-1 ring-inset ring-cyan-500/30',
+    chip: 'border border-cyan-500/40 bg-cyan-500/10 text-cyan-300',
     bar: 'from-cyan-500 to-blue-600',
     text: 'text-cyan-400',
   },
   emerald: {
-    glow: 'group-hover:shadow-glow-green',
+    glow: 'group-hover:shadow-[0_0_25px_rgba(16,185,129,0.2)]',
     grad: 'from-emerald-500 to-teal-500',
-    chip: 'bg-emerald-500/10 text-emerald-300 ring-1 ring-inset ring-emerald-500/30',
+    chip: 'border border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
     bar: 'from-emerald-500 to-teal-500',
     text: 'text-emerald-400',
   },
   slate: {
-    glow: 'group-hover:shadow-glow-purple',
+    glow: 'group-hover:shadow-[0_0_25px_rgba(139,92,246,0.2)]',
     grad: 'from-purple-500 to-fuchsia-600',
-    chip: 'bg-purple-500/10 text-purple-300 ring-1 ring-inset ring-purple-500/30',
+    chip: 'border border-purple-500/40 bg-purple-500/10 text-purple-300',
     bar: 'from-purple-500 to-fuchsia-600',
     text: 'text-purple-400',
   },
   amber: {
-    glow: '',
+    glow: 'group-hover:shadow-[0_0_25px_rgba(245,158,11,0.2)]',
     grad: 'from-amber-500 to-orange-600',
-    chip: 'bg-amber-500/10 text-amber-300 ring-1 ring-inset ring-amber-500/30',
+    chip: 'border border-amber-500/40 bg-amber-500/10 text-amber-300',
     bar: 'from-amber-500 to-orange-600',
     text: 'text-amber-400',
   },
 };
 
 const categories = ['All', 'Payments', 'Freelancing', 'Startups', 'Taxes'];
+
+// Map calculator slug -> live mini widget (or null if none)
+const widgetMap: Record<string, ReactNode> = {
+  'stripe-fee-calculator': <StripeMiniWidget />,
+  'freelance-hourly-rate-calculator': <FreelanceMiniWidget />,
+  'saas-runway-calculator': <RunwayMiniWidget />,
+  'llc-vs-ccorp-tax-calculator': <TaxMiniWidget />,
+};
 
 export default function HomePageClient() {
   const [query, setQuery] = useState('');
@@ -78,9 +94,12 @@ export default function HomePageClient() {
 
   return (
     <>
-      {/* Hero / search */}
+      {/* ===== HUD System Status Bar ===== */}
+      <SystemStatusBar />
+
+      {/* ===== Hero / Terminal Search ===== */}
       <section className="relative overflow-hidden border-b border-slate-800">
-        {/* Glow orbs */}
+        {/* glow orbs */}
         <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl" aria-hidden="true" />
         <div className="pointer-events-none absolute -top-10 right-10 h-48 w-72 rounded-full bg-purple-500/10 blur-3xl" aria-hidden="true" />
         <div className="container-page relative py-14 sm:py-20">
@@ -100,37 +119,28 @@ export default function HomePageClient() {
               instant answers — plus in-depth guides for every tool.
             </p>
 
+            {/* Terminal-style command prompt search */}
             <div className="mx-auto mt-8 max-w-xl animate-fade-in-up">
-              <div className="relative">
-                <Search
-                  className="pointer-events-none absolute inset-y-0 left-0 my-auto h-5 w-5 translate-y-0 pl-3.5 text-slate-500"
-                  aria-hidden="true"
-                />
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search calculators — e.g. 'stripe', 'runway', 'taxes'…"
-                  aria-label="Search calculators"
-                  className="input-field pl-11 text-base"
-                />
-              </div>
+              <TerminalSearch value={query} onChange={setQuery} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Calculator grid */}
+      {/* ===== Live Interactive Calculator Grid ===== */}
       <section className="container-page py-12 sm:py-16">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-xl font-bold text-white sm:text-2xl">All calculators</h2>
+          <h2 className="flex items-center gap-2 text-xl font-bold text-white sm:text-2xl">
+            <Cpu className="h-5 w-5 text-cyan-400" aria-hidden="true" />
+            Calculator engines
+          </h2>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter by category">
             {categories.map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setActiveCat(cat)}
-                className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                className={`rounded-md px-3 py-1.5 font-mono text-xs font-medium uppercase tracking-wide transition ${
                   activeCat === cat
                     ? 'border border-cyan-500/60 bg-cyan-500/15 text-cyan-300 shadow-glow-cyan'
                     : 'border border-slate-700 bg-base-700/50 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-300'
@@ -145,8 +155,9 @@ export default function HomePageClient() {
 
         {filtered.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-700 bg-base-700/40 p-12 text-center">
-            <p className="text-slate-400">
-              No calculators match <strong className="text-slate-200">&ldquo;{query}&rdquo;</strong>. Try a different term or category.
+            <p className="font-mono text-slate-400">
+              <span className="text-rose-400">ERR:</span> no engines match{' '}
+              <strong className="text-slate-200">&ldquo;{query}&rdquo;</strong>. Try a different query.
             </p>
             <button
               type="button"
@@ -163,14 +174,14 @@ export default function HomePageClient() {
           <div className="grid gap-6 sm:grid-cols-2">
             {filtered.map((c, i) => (
               <div key={c.slug} className="animate-fade-in-up" style={{ animationDelay: `${i * 70}ms` }}>
-                <CalculatorCard c={c} />
+                <LiveCalculatorCard c={c} widget={widgetMap[c.slug]} />
               </div>
             ))}
           </div>
         )}
       </section>
 
-      {/* Benefits */}
+      {/* ===== Benefits ===== */}
       <section className="border-t border-slate-800 bg-base-900/40">
         <div className="container-page py-14">
           <div className="mx-auto max-w-2xl text-center">
@@ -201,7 +212,81 @@ export default function HomePageClient() {
   );
 }
 
-function CalculatorCard({ c }: { c: Calculator }) {
+/* ---------------------------------------------------------------
+   HUD System Status Bar
+   --------------------------------------------------------------- */
+function SystemStatusBar() {
+  return (
+    <div className="relative z-10 border-b border-slate-800 bg-base-900/60 backdrop-blur">
+      <div className="container-page flex h-8 items-center justify-between font-mono text-[10px] uppercase tracking-wider text-slate-500">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-1.5 w-1.5 animate-pulse-glow rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
+            <span className="text-emerald-400">SYSTEM ONLINE</span>
+          </span>
+          <span className="hidden text-slate-600 sm:inline">|</span>
+          <span className="hidden items-center gap-1.5 sm:flex">
+            <Cpu className="h-3 w-3 text-cyan-500/70" aria-hidden="true" />
+            <span>4 ENGINES LOADED</span>
+          </span>
+          <span className="hidden text-slate-600 md:inline">|</span>
+          <span className="hidden items-center gap-1.5 md:flex">
+            <Activity className="h-3 w-3 text-cyan-500/70" aria-hidden="true" />
+            <span>LATENCY: 0ms</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Wifi className="h-3 w-3 text-cyan-500/70" aria-hidden="true" />
+          <span className="hidden sm:inline">CLIENT-SIDE · </span>
+          <span>v2.0</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   Terminal-style search input
+   --------------------------------------------------------------- */
+function TerminalSearch({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="hud-frame scanlines relative rounded-xl border border-cyan-500/30 bg-base-900/70 shadow-glow-cyan backdrop-blur">
+      <label htmlFor="terminal-search" className="sr-only">
+        Search calculators
+      </label>
+      <div className="flex items-center px-4 pt-2.5 font-mono text-[10px] uppercase tracking-wider text-slate-500">
+        <span className="text-cyan-400">~/calcsuite</span>
+        <span className="mx-1.5 text-slate-600">$</span>
+        <span className="text-emerald-400">query</span>
+        <span className="ml-auto text-slate-600">PRESS ENTER ↵</span>
+      </div>
+      <div className="flex items-center gap-2 px-4 pb-3 pt-1.5">
+        <span className="font-mono text-lg font-bold text-cyan-400">&gt;_</span>
+        <input
+          id="terminal-search"
+          type="search"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="SEARCH_ENGINE_INPUT… e.g. 'stripe', 'runway', 'taxes'"
+          aria-label="Search calculators"
+          className="w-full bg-transparent font-mono text-base text-cyan-100 placeholder:text-slate-600 focus:outline-none"
+        />
+        {value === '' && <span className="term-cursor" aria-hidden="true" />}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------
+   Live Interactive Calculator Card
+   --------------------------------------------------------------- */
+function LiveCalculatorCard({ c, widget }: { c: Calculator; widget?: ReactNode }) {
   const Icon = iconMap[c.icon] ?? CreditCard;
   const a = accentMap[c.accent] ?? accentMap.indigo;
   return (
@@ -211,28 +296,42 @@ function CalculatorCard({ c }: { c: Calculator }) {
     >
       {/* Top neon bar */}
       <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${a.bar}`} />
+      {/* Sweep sheen on hover */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+        <div className="absolute -inset-y-4 -left-1/3 w-1/3 rotate-12 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 transition group-hover:animate-sweep" />
+      </div>
+
       <div className="flex items-start justify-between">
         <span
           className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${a.grad} text-white shadow-lg`}
         >
           <Icon className="h-6 w-6" aria-hidden="true" />
         </span>
-        <span className={`chip ${a.chip}`}>{c.category}</span>
+        <span className={`chip font-mono text-[10px] uppercase tracking-wider ${a.chip}`}>
+          [{c.category}]
+        </span>
       </div>
+
       <h3 className="mt-5 text-lg font-bold text-white">{c.title}</h3>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{c.tagline}</p>
+      <p className="mt-2 text-sm leading-relaxed text-slate-400">{c.tagline}</p>
+
+      {/* Terminal-style tag badges */}
       <div className="mt-4 flex flex-wrap gap-1.5">
         {c.tags.slice(0, 3).map((t) => (
           <span
             key={t}
-            className="chip border border-slate-700 bg-base-800/60 text-slate-400"
+            className="chip border border-slate-700 bg-base-800/60 font-mono text-[10px] text-slate-500"
           >
             {t}
           </span>
         ))}
       </div>
-      <div className={`mt-5 inline-flex items-center gap-1.5 text-sm font-semibold ${a.text}`}>
-        Open calculator
+
+      {/* LIVE mini widget */}
+      {widget && <div onClick={(e) => e.preventDefault()}>{widget}</div>}
+
+      <div className={`mt-5 inline-flex items-center gap-1.5 font-mono text-sm font-semibold ${a.text}`}>
+        &gt; OPEN_ENGINE
         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
       </div>
     </Link>
