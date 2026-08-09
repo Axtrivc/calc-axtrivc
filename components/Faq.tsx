@@ -31,21 +31,24 @@ export default function Faq({ items, id = 'faq' }: { items: FaqItem[]; id?: stri
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <h2 className="mt-12 mb-4 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+      <h2 className="mt-12 mb-4 text-2xl font-bold tracking-tight text-white sm:text-3xl">
         Frequently asked questions
       </h2>
-      <div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
+      <div className="divide-y divide-slate-800 rounded-2xl border border-slate-800 bg-base-700/50 backdrop-blur">
         {items.map((it, i) => (
           <details key={i} className="group p-5 sm:p-6">
-            <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-base font-semibold text-slate-900 marker:hidden">
+            <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-base font-semibold text-slate-100 marker:hidden">
               <span>{it.question}</span>
-              <span className="mt-0.5 shrink-0 text-slate-400 transition group-open:rotate-45" aria-hidden="true">
+              <span
+                className="mt-0.5 shrink-0 text-cyan-400 transition group-open:rotate-45"
+                aria-hidden="true"
+              >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M10 4v12M4 10h12" strokeLinecap="round" />
                 </svg>
               </span>
             </summary>
-            <div className="mt-3 leading-relaxed text-slate-600 [&_a]:font-medium [&_a]:text-indigo-600 [&_a]:underline [&_p]:mb-3 [&_p]:leading-relaxed">
+            <div className="mt-3 leading-relaxed text-slate-300 [&_a]:font-medium [&_a]:text-cyan-400 [&_a]:underline [&_p]:mb-3 [&_p]:leading-relaxed">
               {it.answer}
             </div>
           </details>

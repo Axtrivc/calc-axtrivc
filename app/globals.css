@@ -4,6 +4,10 @@
 
 :root {
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --cyber-cyan: #00F2FE;
+  --cyber-green: #10B981;
+  --cyber-purple: #8B5CF6;
 }
 
 html {
@@ -11,21 +15,41 @@ html {
 }
 
 body {
-  @apply bg-slate-50 text-slate-800 antialiased;
+  @apply bg-base-800 text-slate-200 antialiased;
   text-rendering: optimizeLegibility;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0, 242, 254, 0.06), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(139, 92, 246, 0.05), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Animated HUD grid background (subtle) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 242, 254, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 254, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: grid-drift 20s linear infinite;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 30%, black, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 30%, black, transparent 80%);
 }
 
 /* Reusable component classes */
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    @apply relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
 
   .input-field {
-    @apply block w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-sm transition
-      placeholder:text-slate-400
-      focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30
-      disabled:cursor-not-allowed disabled:bg-slate-100;
+    @apply block w-full rounded-lg border border-slate-700 bg-base-700/80 px-3.5 py-2.5 font-mono text-slate-100 shadow-inner transition
+      placeholder:text-slate-500
+      focus:border-cyan-500/60 focus:outline-none focus:ring-2 focus:ring-cyan-500/20
+      disabled:cursor-not-allowed disabled:bg-base-700;
   }
 
   .input-prefix {
@@ -34,19 +58,25 @@ body {
 
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition
-      focus:outline-none focus:ring-2 focus:ring-offset-2;
+      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-base-800;
   }
 
   .btn-primary {
-    @apply btn bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
+    @apply btn bg-cyan-500/90 text-base-900 shadow-glow-cyan hover:bg-cyan-400 hover:shadow-glow-cyan-lg focus:ring-cyan-500;
   }
 
   .btn-ghost {
-    @apply btn bg-white text-slate-700 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:ring-indigo-500;
+    @apply btn bg-base-700/60 text-slate-200 ring-1 ring-inset ring-slate-700 backdrop-blur transition hover:border-cyan-500/40 hover:ring-cyan-500/40 hover:shadow-glow-cyan focus:ring-cyan-500;
   }
 
   .card {
-    @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+    @apply rounded-2xl border border-slate-800 bg-base-700/60 shadow-lg backdrop-blur-xl transition
+      hover:border-cyan-500/40 hover:shadow-glow-cyan;
+  }
+
+  /* Inner static card — for nested panels that shouldn't double-glow */
+  .panel {
+    @apply rounded-xl border border-slate-800 bg-base-800/60;
   }
 
   .chip {
@@ -54,59 +84,156 @@ body {
   }
 
   .label {
-    @apply mb-1.5 block text-sm font-medium text-slate-700;
+    @apply mb-1.5 block text-sm font-medium text-slate-300;
   }
 
   .section-title {
-    @apply text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl;
+    @apply text-2xl font-bold tracking-tight text-white sm:text-3xl;
+  }
+
+  /* Mono-numeric readout — for stats and counters */
+  .readout {
+    @apply font-mono tabular-nums;
+  }
+
+  /* Neon text glows */
+  .text-glow-cyan {
+    text-shadow: 0 0 12px rgba(0, 242, 254, 0.5);
+  }
+  .text-glow-green {
+    text-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+  }
+  .text-glow-purple {
+    text-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
   }
 }
 
-/* Article / prose tweaks for SEO content blocks */
+/* ===========================
+   Custom range slider (HUD)
+   =========================== */
+.cyber-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--cyber-cyan) 0%,
+    var(--cyber-cyan) var(--fill, 50%),
+    rgba(51, 65, 85, 0.8) var(--fill, 50%),
+    rgba(51, 65, 85, 0.8) 100%
+  );
+  outline: none;
+  cursor: pointer;
+  transition: background 0.1s linear;
+}
+.cyber-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--cyber-cyan);
+  border: 2px solid #0D1117;
+  box-shadow: 0 0 0 1px rgba(0, 242, 254, 0.5), 0 0 12px rgba(0, 242, 254, 0.7);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cyber-slider::-webkit-slider-thumb:hover,
+.cyber-slider:focus::-webkit-slider-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 1px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.9);
+}
+.cyber-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--cyber-cyan);
+  border: 2px solid #0D1117;
+  box-shadow: 0 0 0 1px rgba(0, 242, 254, 0.5), 0 0 12px rgba(0, 242, 254, 0.7);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cyber-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* ===========================
+   SEO Article / prose (dark)
+   =========================== */
 .prose-article {
   @apply mx-auto max-w-3xl;
 }
 .prose-article h2 {
-  @apply mt-12 mb-4 text-2xl font-bold tracking-tight text-slate-900;
+  @apply mt-12 mb-4 text-2xl font-bold tracking-tight text-white;
   scroll-margin-top: 6rem;
 }
 .prose-article h3 {
-  @apply mt-8 mb-3 text-xl font-semibold text-slate-900;
+  @apply mt-8 mb-3 text-xl font-semibold text-slate-100;
   scroll-margin-top: 6rem;
 }
 .prose-article p {
-  @apply mb-4 leading-relaxed text-slate-700;
+  @apply mb-4 leading-relaxed text-slate-300;
 }
 .prose-article ul {
-  @apply mb-4 list-disc space-y-2 pl-6 text-slate-700;
+  @apply mb-4 list-disc space-y-2 pl-6 text-slate-300;
 }
 .prose-article ol {
-  @apply mb-4 list-decimal space-y-2 pl-6 text-slate-700;
+  @apply mb-4 list-decimal space-y-2 pl-6 text-slate-300;
 }
 .prose-article li {
   @apply leading-relaxed;
 }
 .prose-article a {
-  @apply font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-2 hover:text-indigo-700;
+  @apply font-medium text-cyan-400 underline decoration-cyan-500/40 underline-offset-2 transition hover:text-cyan-300 hover:decoration-cyan-400;
+}
+.prose-article code {
+  @apply rounded bg-base-900/80 px-1.5 py-0.5 font-mono text-sm text-cyan-300 ring-1 ring-inset ring-slate-800;
 }
 .prose-article table {
   @apply my-6 w-full border-collapse overflow-hidden rounded-lg text-sm;
 }
 .prose-article thead {
-  @apply bg-slate-100 text-left text-slate-700;
+  @apply bg-base-900/80 text-left text-slate-300;
 }
 .prose-article th {
   @apply px-4 py-3 font-semibold;
 }
 .prose-article td {
-  @apply border-t border-slate-200 px-4 py-3 text-slate-700;
+  @apply border-t border-slate-800 px-4 py-3 text-slate-300;
 }
 .prose-article tbody tr:nth-child(even) {
-  @apply bg-slate-50/60;
+  @apply bg-base-700/30;
 }
 .prose-article blockquote {
-  @apply my-6 border-l-4 border-indigo-200 bg-indigo-50/60 py-3 pl-4 pr-4 text-slate-700;
+  @apply my-6 border-l-4 border-cyan-500/50 bg-cyan-500/5 py-3 pl-4 pr-4 text-slate-300;
 }
 .prose-article strong {
-  @apply font-semibold text-slate-900;
+  @apply font-semibold text-white;
+}
+
+/* ===========================
+   Scrollbar (subtle cyber)
+   =========================== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0D1117;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+  border: 2px solid #0D1117;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 242, 254, 0.25);
+  color: #fff;
 }

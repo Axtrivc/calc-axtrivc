@@ -4,9 +4,11 @@ import { Home, Search } from 'lucide-react';
 export default function NotFound() {
   return (
     <div className="container-page flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
-      <p className="text-7xl font-extrabold tracking-tight text-indigo-600">404</p>
-      <h1 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">Page not found</h1>
-      <p className="mt-3 max-w-md text-slate-600">
+      <p className="readout animate-pulse-glow text-7xl font-extrabold tracking-tight text-cyan-400 text-glow-cyan sm:text-8xl">
+        404
+      </p>
+      <h1 className="mt-4 text-2xl font-bold text-white sm:text-3xl">Signal lost — page not found</h1>
+      <p className="mt-3 max-w-md text-slate-400">
         The calculator or page you&rsquo;re looking for doesn&rsquo;t exist. It may have been moved or
         renamed.
       </p>
@@ -16,7 +18,7 @@ export default function NotFound() {
           Back to all calculators
         </Link>
         <Link href="/stripe-fee-calculator" className="btn-ghost">
-          <Search className="h-4 w-4" aria-hidden="true" />
+          <Search className="h-4 w-4 text-cyan-400" aria-hidden="true" />
           Try the Stripe calculator
         </Link>
       </div>
