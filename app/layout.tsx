@@ -76,7 +76,7 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#F1F5F9',
+  themeColor: '#EEF2FF',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -114,10 +114,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
       </head>
-      <body className="flex min-h-full flex-col font-sans">
+      <body className="relative flex min-h-full flex-col font-sans">
+        {/* ===== Ambient breathing light layer =====
+            Two large, slow-pulsing color pools fixed behind everything. They give
+            the page a sense of living atmosphere instead of a flat fill. Purely
+            decorative: aria-hidden + pointer-events-none. */}
+        <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+          <div className="animate-breathe-indigo absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-indigo-400/25 blur-[120px]" />
+          <div className="animate-breathe-emerald absolute -bottom-52 -right-40 h-[600px] w-[600px] rounded-full bg-emerald-400/20 blur-[120px]" />
+        </div>
         <ToastProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="relative flex-1">{children}</main>
           <Footer />
         </ToastProvider>
       </body>

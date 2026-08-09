@@ -50,6 +50,15 @@ module.exports = {
           '0%': { strokeDashoffset: '200' },
           '100%': { strokeDashoffset: '0' },
         },
+        // Slow "breathing" ambient blobs — gentle opacity/scale drift, never distracting.
+        'breathe-indigo': {
+          '0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
+          '50%': { opacity: '0.85', transform: 'scale(1.08)' },
+        },
+        'breathe-emerald': {
+          '0%, 100%': { opacity: '0.4', transform: 'scale(1.05)' },
+          '50%': { opacity: '0.8', transform: 'scale(0.96)' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
@@ -57,6 +66,9 @@ module.exports = {
         'slide-in-right': 'slide-in-right 0.3s ease-out forwards',
         'pulse-soft': 'pulse-soft 2.5s ease-in-out infinite',
         'sparkline-draw': 'sparkline-draw 1.6s ease-out forwards',
+        // Long, slow ambient breathing — the page feels alive without ever moving abruptly.
+        'breathe-indigo': 'breathe-indigo 8s ease-in-out infinite',
+        'breathe-emerald': 'breathe-emerald 10s ease-in-out infinite',
       },
     },
   },

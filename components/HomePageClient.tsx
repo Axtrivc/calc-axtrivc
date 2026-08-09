@@ -41,7 +41,7 @@ const accentMap: Record<
     bg: 'bg-gradient-to-br from-indigo-500 to-indigo-600',
     chip: 'bg-indigo-50 text-indigo-700 ring-indigo-100',
     text: 'text-indigo-600',
-    ring: 'hover:border-indigo-300',
+    ring: 'hover:border-indigo-300/80',
     bar: 'from-indigo-500 to-violet-500',
   },
   emerald: {
@@ -49,7 +49,7 @@ const accentMap: Record<
     bg: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
     chip: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
     text: 'text-emerald-600',
-    ring: 'hover:border-emerald-300',
+    ring: 'hover:border-emerald-300/80',
     bar: 'from-emerald-500 to-teal-500',
   },
   slate: {
@@ -57,7 +57,7 @@ const accentMap: Record<
     bg: 'bg-gradient-to-br from-sky-500 to-sky-600',
     chip: 'bg-sky-50 text-sky-700 ring-sky-100',
     text: 'text-sky-600',
-    ring: 'hover:border-sky-300',
+    ring: 'hover:border-sky-300/80',
     bar: 'from-sky-500 to-cyan-500',
   },
   amber: {
@@ -65,7 +65,7 @@ const accentMap: Record<
     bg: 'bg-gradient-to-br from-amber-500 to-amber-600',
     chip: 'bg-amber-50 text-amber-700 ring-amber-100',
     text: 'text-amber-600',
-    ring: 'hover:border-amber-300',
+    ring: 'hover:border-amber-300/80',
     bar: 'from-amber-500 to-orange-500',
   },
 };
@@ -99,6 +99,25 @@ export default function HomePageClient() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Cursor spotlight: write pointer coords to CSS vars on the page wrapper so the
+  // ::before glow follows the mouse. Passive + rAF-throttled so it never blocks.
+  useEffect(() => {
+    let frame = 0;
+    function onMove(e: PointerEvent) {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+      });
+    }
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return calculators.filter((c) => {
@@ -113,7 +132,7 @@ export default function HomePageClient() {
   }, [query, activeCat]);
 
   return (
-    <>
+    <div className="cursor-spotlight relative">
       {/* ===== Workspace command bar (top status strip) ===== */}
       <section className="border-b border-slate-200/70 bg-white/60 backdrop-blur-xl">
         <div className="container-page flex h-9 items-center justify-between text-[11px] font-medium text-slate-500">
@@ -141,7 +160,7 @@ export default function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 bg-white/80 px-3 py-1 text-xs font-medium text-slate-600 shadow-sm backdrop-blur">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/80 bg-white/70 px-3 py-1 text-xs font-medium text-slate-600 shadow-[0_2px_10px_rgba(15,23,42,0.04)] backdrop-blur-xl">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
@@ -189,7 +208,7 @@ export default function HomePageClient() {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search calculators…"
                   aria-label="Search calculators"
-                  className="block w-full rounded-xl border border-slate-200/80 bg-white px-11 pr-24 py-3 text-base text-slate-900 shadow-[0_2px_8px_rgba(15,23,42,0.04)] transition focus-within:border-slate-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-slate-900/5"
+                  className="block w-full rounded-xl border border-white/80 bg-white/70 px-11 pr-24 py-3 text-base text-slate-900 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-xl transition focus-within:border-indigo-300 focus-within:outline-none focus-within:ring-4 focus-within:ring-indigo-500/10"
                 />
                 <kbd className="pointer-events-none absolute inset-y-0 right-3 my-auto hidden h-6 items-center gap-0.5 rounded-md border border-slate-200 bg-slate-50 px-1.5 font-mono text-[10px] font-medium text-slate-400 sm:flex">
                   ⌘K
@@ -225,7 +244,7 @@ export default function HomePageClient() {
           </div>
           {/* Sliding active-pill category filter */}
           <div
-            className="flex flex-wrap gap-1 rounded-full border border-slate-200/70 bg-white p-1 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="flex flex-wrap gap-1 rounded-full border border-white/80 bg-white/70 p-1 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-xl"
             role="group"
             aria-label="Filter by category"
           >
@@ -244,7 +263,7 @@ export default function HomePageClient() {
                   {isActive && (
                     <motion.span
                       layoutId="activeTabPill"
-                      className="absolute inset-0 -z-10 rounded-full bg-slate-900 shadow-sm"
+                      className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 shadow-[0_4px_12px_rgba(79,70,229,0.35)]"
                       transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                     />
                   )}
@@ -256,7 +275,7 @@ export default function HomePageClient() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <div className="glass-card border-dashed border-slate-300/80 p-12 text-center">
             <p className="text-slate-600">
               No calculators match <strong className="text-slate-900">&ldquo;{query}&rdquo;</strong>. Try a
               different term or category.
@@ -275,14 +294,14 @@ export default function HomePageClient() {
         ) : (
           <motion.div layout className="grid gap-6 sm:grid-cols-2">
             <AnimatePresence mode="popLayout">
-              {filtered.map((c) => (
+              {filtered.map((c, i) => (
                 <motion.div
                   key={c.slug}
                   layout
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 26, delay: i * 0.05 }}
                 >
                   <CalculatorCard c={c} widget={widgetMap[c.slug]} onShare={() => show('Copied calculator link', 'success')} />
                 </motion.div>
@@ -308,13 +327,13 @@ export default function HomePageClient() {
             {benefits.map((b, i) => (
               <motion.div
                 key={b.title}
-                className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(15,23,42,0.06)] hover:border-slate-300"
+                className="glass-card p-5 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-indigo-300/80 hover:shadow-[0_20px_40px_rgba(79,70,229,0.12)]"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.4, delay: i * 0.06 }}
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200/60">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-violet-500/10 text-indigo-600 ring-1 ring-inset ring-indigo-200/60">
                   <b.icon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <h3 className="mt-4 text-base font-semibold tracking-tight text-slate-900">{b.title}</h3>
@@ -324,7 +343,7 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
@@ -343,8 +362,8 @@ function SummaryStat({
   sub: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(15,23,42,0.06)] hover:border-slate-300">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200/60">
+    <div className="glass-card flex items-center gap-3 p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-indigo-300/80 hover:shadow-[0_16px_32px_rgba(79,70,229,0.10)]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-violet-500/10 text-indigo-600 ring-1 ring-inset ring-indigo-200/60">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
       <div className="min-w-0">
@@ -376,19 +395,19 @@ function CalculatorCard({
 
   return (
     <article
-      className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(15,23,42,0.06)] hover:border-slate-300`}
+      className={`group glass-card relative flex h-full flex-col overflow-hidden p-5 ${a.ring} transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(79,70,229,0.12)]`}
     >
       {/* accent glow */}
       <div
-        className={`pointer-events-none absolute -top-16 right-0 h-40 w-40 rounded-full bg-gradient-to-br ${a.bar} opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-10`}
+        className={`pointer-events-none absolute -top-16 right-0 h-40 w-40 rounded-full bg-gradient-to-br ${a.bar} opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-20`}
         aria-hidden="true"
       />
 
       <div className="relative flex items-start justify-between">
-        <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${a.bg} text-white shadow-sm`}>
+        <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${a.bg} text-white shadow-[0_8px_20px_rgba(79,70,229,0.25)] transition-transform duration-300 group-hover:scale-105`}>
           <Icon className="h-6 w-6" aria-hidden="true" />
         </span>
-        <span className="bg-slate-100 text-slate-600 text-[11px] font-medium border border-slate-200/50 rounded-full px-2.5 py-0.5">
+        <span className={`text-[11px] font-medium rounded-full px-2.5 py-0.5 ring-1 ring-inset ${a.chip}`}>
           {c.category}
         </span>
       </div>
@@ -404,7 +423,7 @@ function CalculatorCard({
         {c.tags.slice(0, 3).map((t) => (
           <span
             key={t}
-            className="bg-slate-100 text-slate-600 text-[11px] font-medium border border-slate-200/50 rounded-full px-2.5 py-0.5"
+            className="bg-white/70 text-slate-600 text-[11px] font-medium border border-slate-200/60 rounded-full px-2.5 py-0.5 backdrop-blur"
           >
             {t}
           </span>
@@ -415,7 +434,7 @@ function CalculatorCard({
       {widget}
 
       {/* Explicit navigation + share zone, separate from the widget */}
-      <div className="relative mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+      <div className="relative mt-5 flex items-center justify-between border-t border-white/60 pt-4">
         <Link
           href={c.href}
           className={`inline-flex items-center gap-1.5 text-sm font-semibold ${a.text} transition hover:gap-2`}
