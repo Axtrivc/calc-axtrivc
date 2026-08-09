@@ -26,3 +26,6 @@ next-env.d.ts
 
 # editor / tooling internal
 .serena/
+
+# locally installed portable tooling (e.g. portable git)
+.tools/

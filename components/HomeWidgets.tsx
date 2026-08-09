@@ -28,7 +28,7 @@ import AnimateNumber from '@/components/AnimateNumber';
 function WidgetShell({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="mt-5 rounded-xl border border-slate-200/80 bg-white/60 p-3.5 backdrop-blur-sm"
+      className="mt-5 rounded-xl border border-slate-200/70 bg-slate-50/50 p-3.5"
       onPointerDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onTouchStart={(e) => e.stopPropagation()}
@@ -61,7 +61,7 @@ export function StripeMiniWidget() {
         <AnimateNumber
           value={amount}
           format={(n) => usd(n)}
-          className="readout text-sm font-bold text-indigo-600"
+          className="readout text-sm font-semibold text-slate-900"
         />
       </div>
 
@@ -75,7 +75,7 @@ export function StripeMiniWidget() {
       />
 
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5">
+        <div className="rounded-lg border border-slate-200/70 bg-white px-2.5 py-1.5">
           <div className="text-[9px] font-medium uppercase tracking-wider text-slate-400">Fee</div>
           <AnimateNumber
             value={r.fee}
@@ -83,12 +83,12 @@ export function StripeMiniWidget() {
             className="readout block text-sm font-semibold text-rose-600"
           />
         </div>
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50/60 px-2.5 py-1.5">
-          <div className="text-[9px] font-medium uppercase tracking-wider text-emerald-600">You net</div>
+        <div className="rounded-lg border border-slate-200/70 bg-white px-2.5 py-1.5">
+          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-400">You net</div>
           <AnimateNumber
             value={r.net}
             format={(n) => usd(n)}
-            className="readout block text-sm font-semibold text-emerald-700"
+            className="readout block text-sm font-semibold text-slate-900"
           />
         </div>
       </div>
@@ -152,14 +152,14 @@ export function FreelanceMiniWidget() {
               }}
               onPointerDown={(e) => e.stopPropagation()}
               className={`relative rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-                isActive ? 'text-white' : 'text-slate-500 hover:text-emerald-700'
+                isActive ? 'text-white' : 'text-slate-500 hover:text-slate-900'
               }`}
               aria-pressed={isActive}
             >
               {isActive && (
                 <motion.span
                   layoutId="freelance-active-pill"
-                  className="absolute inset-0 -z-10 rounded-full bg-emerald-600 shadow-sm"
+                  className="absolute inset-0 -z-10 rounded-full bg-slate-900 shadow-sm"
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />
               )}
@@ -169,17 +169,17 @@ export function FreelanceMiniWidget() {
         })}
       </div>
       <div className="flex items-center gap-2 text-sm">
-        <span className="readout rounded-lg border border-slate-200 bg-white px-2 py-1 text-slate-700">
+        <span className="readout rounded-lg border border-slate-200/70 bg-white px-2 py-1 text-slate-700">
           {usd(income, 0)}
         </span>
         <span className="text-slate-400">→</span>
-        <span className="readout rounded-lg border border-emerald-200 bg-emerald-50/60 px-2 py-1 font-bold text-emerald-700">
+        <span className="readout rounded-lg border border-slate-200/70 bg-white px-2 py-1 font-semibold text-slate-900">
           <AnimateNumber value={r.hourlyRate} format={(n) => `${usd(n, 0)}/hr`} />
         </span>
       </div>
       <p className="mt-2 text-[10px] text-slate-400">
-        Day <span className="readout">{usd(r.dayRate, 0)}</span> · Month{' '}
-        <span className="readout">{usd(r.monthlyRate, 0)}</span> · 30% tax · 25h/wk
+        Day <span className="readout text-slate-600">{usd(r.dayRate, 0)}</span> · Month{' '}
+        <span className="readout text-slate-600">{usd(r.monthlyRate, 0)}</span> · 30% tax · 25h/wk
       </p>
     </WidgetShell>
   );
@@ -218,7 +218,7 @@ export function RunwayMiniWidget() {
         <AnimateNumber
           value={cash}
           format={(n) => usdCompact(n)}
-          className="readout text-sm font-bold text-sky-600"
+          className="readout text-sm font-semibold text-slate-900"
         />
       </div>
 
@@ -295,14 +295,14 @@ export function TaxMiniWidget() {
               }}
               onPointerDown={(e) => e.stopPropagation()}
               className={`relative rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
-                isActive ? 'text-white' : 'text-slate-500 hover:text-amber-700'
+                isActive ? 'text-white' : 'text-slate-500 hover:text-slate-900'
               }`}
               aria-pressed={isActive}
             >
               {isActive && (
                 <motion.span
                   layoutId="tax-active-pill"
-                  className="absolute inset-0 -z-10 rounded-full bg-amber-600 shadow-sm"
+                  className="absolute inset-0 -z-10 rounded-full bg-slate-900 shadow-sm"
                   transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                 />
               )}
@@ -318,7 +318,7 @@ export function TaxMiniWidget() {
           <AnimateNumber
             value={r.llc.effectiveRate}
             format={(n) => pct(n, 1)}
-            className="readout text-emerald-700"
+            className="readout text-slate-900"
           />
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-200">
@@ -335,7 +335,7 @@ export function TaxMiniWidget() {
           <AnimateNumber
             value={r.ccorp.effectiveRate}
             format={(n) => pct(n, 1)}
-            className="readout text-amber-700"
+            className="readout text-slate-900"
           />
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-slate-200">
@@ -347,7 +347,7 @@ export function TaxMiniWidget() {
         </div>
       </div>
       <p className="mt-2 text-[10px] text-slate-400">
-        Federal tax · <span className="readout">{usd(r.delta, 0)}</span> delta · winner:{' '}
+        Federal tax · <span className="readout text-slate-600">{usd(r.delta, 0)}</span> delta · winner:{' '}
         <span
           className={
             r.winner === 'llc'
