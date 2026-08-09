@@ -322,15 +322,108 @@ body::before {
   animation: sparkline-draw 1.6s ease-out forwards;
 }
 
+/* ===========================
+   Border beam (conic-gradient)
+   Rotating light line along a card's border.
+   =========================== */
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.card-beam {
+  position: relative;
+}
+.card-beam::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px; /* the "border" thickness */
+  background: conic-gradient(
+    from var(--beam-angle),
+    transparent 0deg,
+    transparent 280deg,
+    rgba(0, 242, 254, 0.7) 320deg,
+    rgba(139, 92, 246, 0.5) 345deg,
+    transparent 360deg
+  );
+  /* mask off the center, leaving only the 1px ring */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.card-beam:hover::before,
+.card-beam:focus-within::before {
+  opacity: 1;
+  animation: beam-rotate 4s linear infinite;
+}
+@keyframes beam-rotate {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+/* Fallback for browsers without @property: rotate a static gradient instead */
+@supports not (background: paint(test)) {
+  @supports not (--beam-angle: 0deg) {
+    .card-beam:hover::before {
+      animation: beam-rotate-fallback 4s linear infinite;
+    }
+  }
+}
+@keyframes beam-rotate-fallback {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===========================
+   Ticker marquee (infinite scroll)
+   =========================== */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee 32s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* 3D tilt wrapper (transform set inline by hook) */
+.tilt-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.18s ease-out;
+  will-change: transform;
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   body::before,
   .scanlines::after,
   .sparkline-path,
-  .term-cursor {
+  .term-cursor,
+  .card-beam::before,
+  .marquee-track {
     animation: none !important;
   }
   .sparkline-path {
     stroke-dashoffset: 0;
   }
+  .card-beam:hover::before {
+    opacity: 1;
+  }
+  .tilt-3d {
+    transform: none !important;
+  }
 }
+

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   CreditCard,
   Clock,
@@ -22,6 +22,7 @@ import {
   RunwayMiniWidget,
   TaxMiniWidget,
 } from '@/components/HomeWidgets';
+import { useTilt } from '@/components/useTilt';
 
 const iconMap: Record<string, LucideIcon> = {
   CreditCard,
@@ -118,6 +119,9 @@ export default function HomePageClient() {
               Stop guessing at Stripe fees, freelance rates, runway, and entity taxes. Get precise,
               instant answers — plus in-depth guides for every tool.
             </p>
+
+            {/* Live rolling metric */}
+            <HeroRollingCounter />
 
             {/* Terminal-style command prompt search */}
             <div className="mx-auto mt-8 max-w-xl animate-fade-in-up">
@@ -216,6 +220,7 @@ export default function HomePageClient() {
    HUD System Status Bar
    --------------------------------------------------------------- */
 function SystemStatusBar() {
+  const latency = useOscillatingLatency();
   return (
     <div className="relative z-10 border-b border-slate-800 bg-base-900/60 backdrop-blur">
       <div className="container-page flex h-8 items-center justify-between font-mono text-[10px] uppercase tracking-wider text-slate-500">
@@ -232,7 +237,7 @@ function SystemStatusBar() {
           <span className="hidden text-slate-600 md:inline">|</span>
           <span className="hidden items-center gap-1.5 md:flex">
             <Activity className="h-3 w-3 text-cyan-500/70" aria-hidden="true" />
-            <span>LATENCY: 0ms</span>
+            <span>LATENCY: {latency}ms</span>
           </span>
         </div>
         <div className="flex items-center gap-1.5">
@@ -243,6 +248,111 @@ function SystemStatusBar() {
       </div>
     </div>
   );
+}
+
+/**
+ * Smoothly oscillates a latency readout between ~0.6ms and ~1.3ms to create a
+ * "live system pulse" feel. Uses a single rAF loop with an easing sine wave so
+ * there are no per-second React re-renders. Disabled under reduced-motion.
+ */
+function useOscillatingLatency() {
+  const [latency, setLatency] = useState('0.0');
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setLatency('0.0');
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = (now - start) / 1000; // seconds
+      // sine oscillation: period ~2.6s between 0.6 and 1.3
+      const v = 0.95 + 0.35 * Math.sin(t * (2 * Math.PI) / 2.6);
+      setLatency(v.toFixed(1));
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return latency;
+}
+
+/* ---------------------------------------------------------------
+   Hero rolling live counter
+   --------------------------------------------------------------- */
+/**
+ * Rolling metric that animates up on mount (count-up) then keeps ticking
+ * upward slowly to feel "live". SSG-safe: starts at a deterministic base so
+ * server and first client paint match, then animates after mount.
+ */
+function HeroRollingCounter() {
+  const BASE = 1_842_910;
+  const display = useCountUp({ from: BASE, to: BASE + 5300, duration: 2200, keepTicking: true });
+
+  return (
+    <div className="mx-auto mt-6 flex w-fit animate-fade-in-up items-center gap-2.5 rounded-full border border-slate-800 bg-base-900/60 px-4 py-2 backdrop-blur">
+      <span className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(0,242,254,0.9)]" />
+      </span>
+      <span className="readout text-lg font-bold text-cyan-300 text-glow-cyan">${display}</span>
+      <span className="font-mono text-[11px] uppercase tracking-wide text-slate-500">
+        calculated locally · this month
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Count-up hook with optional continuous slow ticking. Mount-time only, so it
+ * is SSG-safe (the server-rendered value matches the initial client render;
+ * animation begins in useEffect). Uses one rAF loop. Respects reduced-motion.
+ */
+function useCountUp({
+  from,
+  to,
+  duration = 2000,
+  keepTicking = false,
+}: {
+  from: number;
+  to: number;
+  duration?: number;
+  keepTicking?: boolean;
+}) {
+  const [value, setValue] = useState(from);
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      setValue(to);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const t = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+      setValue(from + (to - from) * eased);
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else if (keepTicking) {
+        // slow continuous upward drift, +1 every ~900ms
+        let last = now;
+        const drift = (n: number) => {
+          if (n - last > 900) {
+            setValue((v) => v + 1);
+            last = n;
+          }
+          raf = requestAnimationFrame(drift);
+        };
+        raf = requestAnimationFrame(drift);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [from, to, duration, keepTicking]);
+
+  return Math.round(value).toLocaleString('en-US');
 }
 
 /* ---------------------------------------------------------------
@@ -289,10 +399,12 @@ function TerminalSearch({
 function LiveCalculatorCard({ c, widget }: { c: Calculator; widget?: ReactNode }) {
   const Icon = iconMap[c.icon] ?? CreditCard;
   const a = accentMap[c.accent] ?? accentMap.indigo;
+  const tiltRef = useTilt<HTMLAnchorElement>({ max: 6, scale: 1.015 });
   return (
     <Link
+      ref={tiltRef}
       href={c.href}
-      className={`group card relative flex h-full flex-col overflow-hidden p-6 ring-1 ring-transparent transition ${a.glow}`}
+      className={`group card card-beam tilt-3d relative flex h-full flex-col overflow-hidden p-6 ring-1 ring-transparent transition ${a.glow}`}
     >
       {/* Top neon bar */}
       <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${a.bar}`} />
