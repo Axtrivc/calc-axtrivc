@@ -37,6 +37,28 @@ export default function NumberInput({
 }: NumberInputProps) {
   // Keep a raw string so the user can type values like "" or "1." without fighting the formatter.
   const [raw, setRaw] = useState<string>(() => (value ? String(value) : ''));
+  // Track focus so external value changes (slider drags, presets, Reset) never
+  // clobber what the user is mid-way through typing.
+  const focusedRef = useRef(false);
+
+  // Two-way sync: when the parent value changes from OUTSIDE this input
+  // (e.g. the paired slider, a preset pill, or a Reset button), refresh the
+  // displayed text — but only while the user is not actively typing.
+  useEffect(() => {
+    if (focusedRef.current) return;
+    const cleaned = raw.replace(/[, $%]/g, '');
+    const parsed = parseFloat(cleaned);
+    const current = Number.isFinite(parsed) ? parsed : 0;
+    if (current !== value) {
+      // toPrecision(12) strips float artifacts like 10000000.000000006 that
+      // the log slider's exp() math can produce.
+      const clean = Number(value.toPrecision(12));
+      setRaw(clean ? String(clean) : '');
+    }
+    // `raw` is intentionally not a dependency — this effect reacts to external
+    // value changes only; including raw would loop while typing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   function handle(e: React.ChangeEvent<HTMLInputElement>) {
     const next = e.target.value;
@@ -72,6 +94,15 @@ export default function NumberInput({
           step={step}
           value={raw}
           onChange={handle}
+          onFocus={() => {
+            focusedRef.current = true;
+          }}
+          onBlur={() => {
+            focusedRef.current = false;
+            // Normalize the displayed text on blur (e.g. "1." -> "1").
+            const clean = Number(value.toPrecision(12));
+            setRaw(clean ? String(clean) : '');
+          }}
           placeholder={placeholder}
           className={`input-field ${prefix ? 'pl-7' : ''} ${suffix ? 'pr-12' : ''}`}
         />
@@ -184,12 +215,20 @@ export function SliderControl({
       ? formatValue(n)
       : `${prefix ?? ''}${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}${suffix ?? ''}`;
 
+  // Logarithmic sliders need a strictly positive lower bound — Math.log(0) is
+  // -Infinity and would turn every position into NaN. When a caller passes
+  // min=0 ("cash can be zero"), we substitute a small positive floor for the
+  // SCALE only. The numeric input still accepts 0; values below the floor
+  // simply sit at the slider's leftmost stop.
+  const logFloor = logarithmic && min <= 0 ? Math.max(1, max / 1_000_000) : min;
+
   const pct = (() => {
     const clamped = Math.min(max, Math.max(min, value));
-    if (logarithmic && min > 0 && max > min) {
-      const lmin = Math.log(min);
+    if (logarithmic && max > logFloor) {
+      const lmin = Math.log(logFloor);
       const lmax = Math.log(max);
-      return Math.max(0, Math.min(100, ((Math.log(Math.max(min, clamped)) - lmin) / (lmax - lmin)) * 100));
+      const v = Math.max(logFloor, clamped);
+      return Math.max(0, Math.min(100, ((Math.log(v) - lmin) / (lmax - lmin)) * 100));
     }
     return Math.max(0, Math.min(100, ((clamped - min) / (max - min)) * 100));
   })();
@@ -206,7 +245,7 @@ export function SliderControl({
       )}
 
       {logarithmic ? (
-        <LogSlider id={id} value={value} onChange={onChange} min={min} max={max} />
+        <LogSlider id={id} value={value} onChange={onChange} min={logFloor} max={max} />
       ) : (
         // NATIVE range — min/max/step drive the handle directly. No position remap
         // means zero thumb-fighting during continuous drags.
@@ -276,12 +315,14 @@ function LogSlider({
   max: number;
 }) {
   const POS_MAX = 1000;
-  const lmin = Math.log(min);
-  const lmax = Math.log(max);
+  // Defensive: a log scale is undefined at 0 — clamp to a positive floor.
+  const safeMin = min > 0 ? min : 1;
+  const lmin = Math.log(safeMin);
+  const lmax = Math.log(Math.max(max, safeMin + 1));
 
   const toPos = (v: number) => {
-    const c = Math.min(max, Math.max(min, v));
-    return Math.round(((Math.log(Math.max(min, c)) - lmin) / (lmax - lmin)) * POS_MAX);
+    const c = Math.min(max, Math.max(safeMin, v));
+    return Math.round(((Math.log(c) - lmin) / (lmax - lmin)) * POS_MAX);
   };
   const fromPos = (p: number) => Math.exp(lmin + (p / POS_MAX) * (lmax - lmin));
 

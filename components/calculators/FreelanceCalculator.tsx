@@ -1,17 +1,29 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Info, RotateCcw } from 'lucide-react';
 import NumberInput, { AnimatedNumber, CopyButton, SliderControl, StatCard } from '@/components/NumberInput';
+import ScenarioButtons from '@/components/ScenarioButtons';
 import { computeFreelanceRate } from '@/lib/freelance';
 import { usd, numFmt, pct } from '@/lib/format';
+import { useWorkbenchInputs, recordRecent } from '@/lib/workbench';
+
+const SLUG = 'freelance-hourly-rate-calculator';
+const DEFAULTS = { takeHome: 90000, expenses: 12000, taxRate: 30, vacation: 25, weeklyHours: 25 };
 
 export default function FreelanceCalculator() {
-  const [takeHome, setTakeHome] = useState(90000);
-  const [expenses, setExpenses] = useState(12000);
-  const [taxRate, setTaxRate] = useState(30);
-  const [vacation, setVacation] = useState(25);
-  const [weeklyHours, setWeeklyHours] = useState(25);
+  const { values, set, reset } = useWorkbenchInputs(SLUG, DEFAULTS);
+  const { takeHome, expenses, taxRate, vacation, weeklyHours } = values;
+
+  useEffect(() => {
+    recordRecent(SLUG);
+  }, []);
+
+  const setTakeHome = (n: number) => set('takeHome', n);
+  const setExpenses = (n: number) => set('expenses', n);
+  const setTaxRate = (n: number) => set('taxRate', n);
+  const setVacation = (n: number) => set('vacation', n);
+  const setWeeklyHours = (n: number) => set('weeklyHours', n);
 
   const r = useMemo(
     () =>
@@ -24,14 +36,6 @@ export default function FreelanceCalculator() {
       }),
     [takeHome, expenses, taxRate, vacation, weeklyHours]
   );
-
-  function reset() {
-    setTakeHome(90000);
-    setExpenses(12000);
-    setTaxRate(30);
-    setVacation(25);
-    setWeeklyHours(25);
-  }
 
   const copyText = `Freelance rate: ${usd(r.hourlyRate, 0)}/hr · day rate ${usd(r.dayRate, 0)} · monthly gross ${usd(r.monthlyRate, 0)} (gross needed ${usd(r.grossNeeded, 0)}, ${numFmt(r.billableHours, 0)} billable hrs/yr)`;
 
@@ -192,6 +196,12 @@ export default function FreelanceCalculator() {
             Reset
           </button>
           <CopyButton text={copyText} label="Copy result" />
+          <ScenarioButtons
+            slug={SLUG}
+            shortTitle="Hourly Rate"
+            href="/freelance-hourly-rate-calculator/"
+            params={{ takeHome, expenses, taxRate, vacation, weeklyHours }}
+          />
         </div>
       </div>
 

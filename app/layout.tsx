@@ -52,12 +52,21 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: `${siteConfig.name} — Free Financial & Business Calculators`,
     description: siteConfig.description,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1823,
+        height: 863,
+        alt: `${siteConfig.name} — free financial & business calculators`,
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: `${siteConfig.name} — Free Financial & Business Calculators`,
     description: siteConfig.description,
     creator: siteConfig.twitter,
+    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,

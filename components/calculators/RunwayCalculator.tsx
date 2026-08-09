@@ -1,28 +1,34 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Info, RotateCcw, TrendingDown, TrendingUp } from 'lucide-react';
 import NumberInput, { AnimatedNumber, CopyButton, SliderControl, StatCard } from '@/components/NumberInput';
+import ScenarioButtons from '@/components/ScenarioButtons';
 import { computeRunway } from '@/lib/runway';
 import { usd, usdCompact, numFmt, pct } from '@/lib/format';
+import { useWorkbenchInputs, recordRecent } from '@/lib/workbench';
+
+const SLUG = 'saas-runway-calculator';
+const DEFAULTS = { cash: 500000, burn: 50000, mrr: 10000, growth: 8 };
 
 export default function RunwayCalculator() {
-  const [cash, setCash] = useState(500000);
-  const [burn, setBurn] = useState(50000);
-  const [mrr, setMrr] = useState(10000);
-  const [growth, setGrowth] = useState(8);
+  const { values, set, reset } = useWorkbenchInputs(SLUG, DEFAULTS);
+  const { cash, burn, mrr, growth } = values;
+
+  // Mark this tool as recently used for the workbench home panel.
+  useEffect(() => {
+    recordRecent(SLUG);
+  }, []);
 
   const r = useMemo(
     () => computeRunway({ cash, grossBurn: burn, mrr, growthRate: growth }),
     [cash, burn, mrr, growth]
   );
 
-  function reset() {
-    setCash(500000);
-    setBurn(50000);
-    setMrr(10000);
-    setGrowth(8);
-  }
+  const setCash = (n: number) => set('cash', n);
+  const setBurn = (n: number) => set('burn', n);
+  const setMrr = (n: number) => set('mrr', n);
+  const setGrowth = (n: number) => set('growth', n);
 
   const runwayLabel = r.months === null ? '∞' : numFmt(r.months, 0);
   const runwayColor =
@@ -167,6 +173,12 @@ export default function RunwayCalculator() {
             Reset
           </button>
           <CopyButton text={copyText} label="Copy result" />
+          <ScenarioButtons
+            slug={SLUG}
+            shortTitle="Runway"
+            href="/saas-runway-calculator/"
+            params={{ cash, burn, mrr, growth }}
+          />
         </div>
       </div>
 

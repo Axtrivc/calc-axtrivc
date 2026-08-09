@@ -26,6 +26,10 @@ next-env.d.ts
 
 # editor / tooling internal
 .serena/
+.zcode/
+
+# local dev-server log
+dev.log
 
 # locally installed portable tooling (e.g. portable git)
 .tools/

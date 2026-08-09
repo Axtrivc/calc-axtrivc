@@ -1,10 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Info, RotateCcw } from 'lucide-react';
 import NumberInput, { AnimatedNumber, CopyButton, SliderControl } from '@/components/NumberInput';
+import ScenarioButtons from '@/components/ScenarioButtons';
 import { STRIPE_RATES, type StripeFeeType, computeFee, reverseFromNet } from '@/lib/stripe';
 import { usd, pct } from '@/lib/format';
+import { useWorkbenchInputs, recordRecent } from '@/lib/workbench';
 
 type Mode = 'forward' | 'reverse';
 
@@ -16,11 +18,21 @@ const feeTypes: { id: StripeFeeType; label: string; sub: string }[] = [
 
 const AMOUNT_PRESETS = [100, 1000, 10000, 50000];
 
+const SLUG = 'stripe-fee-calculator';
+const DEFAULTS = { amount: 100, targetNet: 1000 };
+
 export default function StripeCalculator() {
   const [mode, setMode] = useState<Mode>('forward');
   const [feeType, setFeeType] = useState<StripeFeeType>('domestic');
-  const [amount, setAmount] = useState<number>(100);
-  const [targetNet, setTargetNet] = useState<number>(1000);
+  const { values, set, reset } = useWorkbenchInputs(SLUG, DEFAULTS);
+  const { amount, targetNet } = values;
+
+  useEffect(() => {
+    recordRecent(SLUG);
+  }, []);
+
+  const setAmount = (n: number) => set('amount', n);
+  const setTargetNet = (n: number) => set('targetNet', n);
 
   const result = useMemo(() => {
     if (mode === 'forward') {
@@ -32,11 +44,10 @@ export default function StripeCalculator() {
   const isReverse = mode === 'reverse';
   const rate = STRIPE_RATES[feeType];
 
-  function reset() {
+  function resetAll() {
     setMode('forward');
     setFeeType('domestic');
-    setAmount(100);
-    setTargetNet(1000);
+    reset();
   }
 
   const netPct = result.charge > 0 ? (result.net / result.charge) * 100 : 0;
@@ -163,11 +174,17 @@ export default function StripeCalculator() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <button type="button" onClick={reset} className="btn-ghost">
+          <button type="button" onClick={resetAll} className="btn-ghost">
             <RotateCcw className="h-4 w-4 text-indigo-500" aria-hidden="true" />
             Reset
           </button>
           <CopyButton text={copyText} label="Copy result" />
+          <ScenarioButtons
+            slug={SLUG}
+            shortTitle="Stripe Fees"
+            href="/stripe-fee-calculator/"
+            params={{ amount, targetNet }}
+          />
         </div>
       </div>
 

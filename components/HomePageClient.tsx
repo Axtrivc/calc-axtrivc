@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   CreditCard,
@@ -13,9 +13,14 @@ import {
   ShieldCheck,
   Zap,
   Cpu,
+  Pin,
+  History,
+  Bookmark,
+  Trash2,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
-import { calculators, type Calculator } from '@/lib/site';
+import { calculators, siteConfig, type Calculator } from '@/lib/site';
 import {
   StripeMiniWidget,
   FreelanceMiniWidget,
@@ -23,6 +28,17 @@ import {
   TaxMiniWidget,
 } from '@/components/HomeWidgets';
 import { useToast } from '@/components/Toast';
+import { copyText } from '@/lib/clipboard';
+import {
+  getPins,
+  setPins,
+  getRecents,
+  getScenarios,
+  removeScenario,
+  relTime,
+  type RecentEntry,
+  type Scenario,
+} from '@/lib/workbench';
 
 const iconMap: Record<string, LucideIcon> = {
   CreditCard,
@@ -80,27 +96,62 @@ const widgetMap: Record<string, ReactNode> = {
   'llc-vs-ccorp-tax-calculator': <TaxMiniWidget />,
 };
 
+const bySlug = new Map(calculators.map((c) => [c.slug, c]));
+
+/** Relative deep link that restores a saved scenario via query params. */
+function scenarioHref(s: Scenario): string {
+  const calc = bySlug.get(s.slug);
+  const sp = new URLSearchParams();
+  for (const [k, v] of Object.entries(s.params)) {
+    if (Number.isFinite(v)) sp.set(k, String(Number.isInteger(v) ? v : Number(v.toFixed(4))));
+  }
+  const qs = sp.toString();
+  return `${calc?.href ?? '/'}${qs ? `?${qs}` : ''}`;
+}
+
+function scenarioSummary(s: Scenario): string {
+  return Object.entries(s.params)
+    .map(([k, v]) => {
+      const clean = Number(v.toPrecision(12));
+      return `${k}=${Number.isInteger(clean) ? clean.toLocaleString('en-US') : clean}`;
+    })
+    .join(' · ');
+}
+
 export default function HomePageClient() {
   const { show } = useToast();
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState('All');
-  const searchRef = useRef<HTMLInputElement>(null);
 
-  // ⌘K / Ctrl+K focuses the command bar.
+  // Workbench memory — all client-side, loaded after mount (SSG-safe).
+  const [mounted, setMounted] = useState(false);
+  const [pins, setPinsState] = useState<string[]>([]);
+  const [recents, setRecents] = useState<RecentEntry[]>([]);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
+
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        searchRef.current?.focus();
-        searchRef.current?.select();
-      }
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    setMounted(true);
+    setPinsState(getPins());
+    setRecents(getRecents());
+    setScenarios(getScenarios());
+
+    // The WebSite SearchAction JSON-LD points at /?q= — honor it.
+    const q = new URLSearchParams(window.location.search).get('q');
+    if (q) setQuery(q);
   }, []);
 
-  // Cursor spotlight: write pointer coords to CSS vars on the page wrapper so the
-  // ::before glow follows the mouse. Passive + rAF-throttled so it never blocks.
+  // Keep ?q= in the URL in sync with the search box (shareable filter state).
+  useEffect(() => {
+    if (!mounted) return;
+    const url = new URL(window.location.href);
+    const q = query.trim();
+    if (q) url.searchParams.set('q', q);
+    else url.searchParams.delete('q');
+    window.history.replaceState(null, '', url);
+  }, [query, mounted]);
+
+  // Cursor spotlight: write pointer coords to CSS vars on the page wrapper so
+  // the ::before glow follows the mouse. Passive + rAF-throttled.
   useEffect(() => {
     let frame = 0;
     function onMove(e: PointerEvent) {
@@ -120,7 +171,7 @@ export default function HomePageClient() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return calculators.filter((c) => {
+    const list = calculators.filter((c) => {
       const matchCat = activeCat === 'All' || c.category === activeCat;
       if (!matchCat) return false;
       if (!q) return true;
@@ -129,7 +180,37 @@ export default function HomePageClient() {
         .toLowerCase();
       return haystack.includes(q);
     });
-  }, [query, activeCat]);
+    // Pinned tools float to the top of the grid.
+    return [...list].sort(
+      (a, b) => Number(pins.includes(b.slug)) - Number(pins.includes(a.slug))
+    );
+  }, [query, activeCat, pins]);
+
+  function togglePin(slug: string) {
+    const next = pins.includes(slug) ? pins.filter((p) => p !== slug) : [slug, ...pins];
+    setPinsState(next);
+    setPins(next);
+    const calc = bySlug.get(slug);
+    const name = calc?.shortTitle ?? calc?.title ?? 'Tool';
+    show(next.includes(slug) ? `Pinned ${name} to your workbench` : `Unpinned ${name}`, 'info');
+  }
+
+  function handleDeleteScenario(id: string) {
+    removeScenario(id);
+    setScenarios(getScenarios());
+    show('Scenario removed', 'info');
+  }
+
+  async function handleShare(c: Calculator) {
+    const ok = await copyText(`${siteConfig.url}${c.href}`);
+    show(ok ? 'Copied calculator link' : 'Copy failed', ok ? 'success' : 'info');
+  }
+
+  const hasWorkbenchData = pins.length > 0 || recents.length > 0 || scenarios.length > 0;
+  const pinnedCalcs = pins.map((p) => bySlug.get(p)).filter(Boolean) as Calculator[];
+  const recentCalcs = recents
+    .map((r) => ({ ...r, calc: bySlug.get(r.slug) }))
+    .filter((r) => r.calc);
 
   return (
     <div className="cursor-spotlight relative">
@@ -152,7 +233,7 @@ export default function HomePageClient() {
       {/* ===== Hero ===== */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-200/60 via-slate-50 to-slate-100" />
-        <div className="container-page relative py-14 sm:py-20">
+        <div className="container-page relative py-12 sm:py-16">
           <div className="mx-auto max-w-3xl text-center">
             <motion.div
               className="mb-5 flex items-center justify-center"
@@ -165,7 +246,7 @@ export default function HomePageClient() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 </span>
-                Live workspace · 100% client-side
+                Personal workbench · 100% client-side
               </span>
             </motion.div>
 
@@ -176,8 +257,7 @@ export default function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05 }}
             >
-              Personal finance suite for{' '}
-              <span className="text-slate-900">freelancers, startups & SMBs</span>
+              Your personal finance workbench
             </motion.h1>
             <motion.p
               className="mx-auto mt-5 max-w-2xl text-lg text-slate-500"
@@ -185,11 +265,11 @@ export default function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.12 }}
             >
-              Stop guessing at Stripe fees, freelance rates, runway, and entity taxes. Get precise,
-              instant answers — plus in-depth guides for every tool.
+              Stripe fees, freelance rates, runway, entity taxes — tools that remember your
+              numbers, save your scenarios, and never send a single digit to a server.
             </motion.p>
 
-            {/* Command-K style search */}
+            {/* Search */}
             <motion.div
               className="mx-auto mt-8 max-w-xl"
               initial={{ opacity: 0, y: 12 }}
@@ -202,44 +282,162 @@ export default function HomePageClient() {
                   aria-hidden="true"
                 />
                 <input
-                  ref={searchRef}
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search calculators…"
                   aria-label="Search calculators"
-                  className="block w-full rounded-xl border border-white/80 bg-white/70 px-11 pr-24 py-3 text-base text-slate-900 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-xl transition focus-within:border-indigo-300 focus-within:outline-none focus-within:ring-4 focus-within:ring-indigo-500/10"
+                  className="block w-full rounded-xl border border-white/80 bg-white/70 px-11 py-3 text-base text-slate-900 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-xl transition focus-within:border-indigo-300 focus-within:outline-none focus-within:ring-4 focus-within:ring-indigo-500/10"
                 />
-                <kbd className="pointer-events-none absolute inset-y-0 right-3 my-auto hidden h-6 items-center gap-0.5 rounded-md border border-slate-200 bg-slate-50 px-1.5 font-mono text-[10px] font-medium text-slate-400 sm:flex">
-                  ⌘K
-                </kbd>
               </div>
             </motion.div>
           </div>
 
           {/* Hero dashboard summary bar */}
           <motion.div
-            className="mx-auto mt-12 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3"
+            className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.24 }}
           >
             <SummaryStat icon={Cpu} value="4 active engines" sub="Ready for instant calculation" />
             <SummaryStat icon={ShieldCheck} value="100% private" sub="Zero server logs & no registration" />
-            <SummaryStat icon={Zap} value="Local compute" sub="Instant client-side JavaScript execution" />
+            {mounted && scenarios.length > 0 ? (
+              <SummaryStat
+                icon={Bookmark}
+                value={`${scenarios.length} scenario${scenarios.length === 1 ? '' : 's'} saved`}
+                sub="Restorable from your workbench"
+              />
+            ) : (
+              <SummaryStat icon={Zap} value="Local compute" sub="Instant client-side JavaScript execution" />
+            )}
           </motion.div>
         </div>
       </section>
 
+      {/* ===== My workbench ===== */}
+      <section className="container-page pb-2 pt-2 sm:pb-4" aria-label="My workbench">
+        <div className="glass-card overflow-hidden p-5 sm:p-6">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="flex items-center gap-2 text-base font-bold tracking-tight text-slate-900">
+              <Sparkles className="h-4 w-4 text-indigo-500" aria-hidden="true" />
+              My workbench
+            </h2>
+            <span className="text-[11px] font-medium text-slate-400">
+              Private — stored only in this browser
+            </span>
+          </div>
+
+          {!mounted ? (
+            <div className="h-16 animate-pulse rounded-xl bg-slate-100/70" aria-hidden="true" />
+          ) : !hasWorkbenchData ? (
+            <div className="rounded-xl border border-dashed border-slate-300/80 bg-white/40 px-5 py-6 text-center text-sm text-slate-500">
+              Your workbench is empty. Pin a calculator with the{' '}
+              <Pin className="inline h-3.5 w-3.5 text-indigo-500" aria-hidden="true" /> icon on a
+              card, or press <strong className="font-semibold text-slate-700">Save scenario</strong>{' '}
+              inside any calculator — everything will show up here.
+            </div>
+          ) : (
+            <div className="grid gap-4 lg:grid-cols-3">
+              {/* Pinned */}
+              <div className="rounded-xl border border-white/70 bg-white/50 p-4 backdrop-blur">
+                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <Pin className="h-3.5 w-3.5" aria-hidden="true" /> Pinned
+                </h3>
+                {pinnedCalcs.length === 0 ? (
+                  <p className="text-xs text-slate-400">Nothing pinned yet.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {pinnedCalcs.map((c) => {
+                      const a = accentMap[c.accent] ?? accentMap.indigo;
+                      const Icon = iconMap[c.icon] ?? CreditCard;
+                      return (
+                        <Link
+                          key={c.slug}
+                          href={c.href}
+                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition hover:-translate-y-0.5 ${a.chip}`}
+                        >
+                          <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                          {c.shortTitle ?? c.title}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Recent */}
+              <div className="rounded-xl border border-white/70 bg-white/50 p-4 backdrop-blur">
+                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <History className="h-3.5 w-3.5" aria-hidden="true" /> Recent
+                </h3>
+                {recentCalcs.length === 0 ? (
+                  <p className="text-xs text-slate-400">No recent activity yet.</p>
+                ) : (
+                  <ul className="space-y-1.5">
+                    {recentCalcs.slice(0, 4).map((r) => (
+                      <li key={r.slug} className="flex items-center justify-between gap-2">
+                        <Link
+                          href={r.calc!.href}
+                          className="truncate text-sm font-medium text-slate-700 transition hover:text-indigo-600"
+                        >
+                          {r.calc!.shortTitle ?? r.calc!.title}
+                        </Link>
+                        <span className="shrink-0 font-mono text-[10px] text-slate-400">{relTime(r.ts)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Scenarios */}
+              <div className="rounded-xl border border-white/70 bg-white/50 p-4 backdrop-blur">
+                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <Bookmark className="h-3.5 w-3.5" aria-hidden="true" /> Saved scenarios
+                </h3>
+                {scenarios.length === 0 ? (
+                  <p className="text-xs text-slate-400">
+                    Save a scenario inside any calculator to replay or share it later.
+                  </p>
+                ) : (
+                  <ul className="space-y-2">
+                    {scenarios.slice(0, 4).map((s) => (
+                      <li key={s.id} className="group flex items-center gap-2">
+                        <Link href={scenarioHref(s)} className="min-w-0 flex-1" title={scenarioSummary(s)}>
+                          <span className="block truncate text-sm font-medium text-slate-700 transition group-hover:text-indigo-600">
+                            {s.name}
+                          </span>
+                          <span className="block truncate font-mono text-[10px] text-slate-400">
+                            {scenarioSummary(s)}
+                          </span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteScenario(s.id)}
+                          className="shrink-0 rounded-md p-1 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500"
+                          aria-label={`Delete scenario ${s.name}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* ===== Calculator grid ===== */}
-      <section className="container-page py-12 sm:py-16">
+      <section className="container-page py-10 sm:py-14">
         <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
               All calculators
             </h2>
             <p className="mt-0.5 text-sm text-slate-500">
-              Drag, tweak, and preview — then open the full engine.
+              Drag, tweak, and preview — then open the full engine. Pin the ones you use daily.
             </p>
           </div>
           {/* Sliding active-pill category filter */}
@@ -303,7 +501,13 @@ export default function HomePageClient() {
                   exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ type: 'spring', stiffness: 260, damping: 26, delay: i * 0.05 }}
                 >
-                  <CalculatorCard c={c} widget={widgetMap[c.slug]} onShare={() => show('Copied calculator link', 'success')} />
+                  <CalculatorCard
+                    c={c}
+                    widget={widgetMap[c.slug]}
+                    pinned={pins.includes(c.slug)}
+                    onTogglePin={() => togglePin(c.slug)}
+                    onShare={() => handleShare(c)}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -347,11 +551,7 @@ export default function HomePageClient() {
   );
 }
 
-/* ---------- Summary stat tile ----------
- * Honest value propositions — no synthetic metrics. The value is the
- * headline (slate-900, mono), the sub line is a short, factual descriptor.
- * All tiles share one neutral icon treatment for a consistent, refined look.
- */
+/* ---------- Summary stat tile ---------- */
 function SummaryStat({
   icon: Icon,
   value,
@@ -384,10 +584,14 @@ function SummaryStat({
 function CalculatorCard({
   c,
   widget,
+  pinned,
+  onTogglePin,
   onShare,
 }: {
   c: Calculator;
   widget?: ReactNode;
+  pinned: boolean;
+  onTogglePin: () => void;
   onShare?: () => void;
 }) {
   const Icon = iconMap[c.icon] ?? CreditCard;
@@ -407,9 +611,24 @@ function CalculatorCard({
         <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${a.bg} text-white shadow-[0_8px_20px_rgba(79,70,229,0.25)] transition-transform duration-300 group-hover:scale-105`}>
           <Icon className="h-6 w-6" aria-hidden="true" />
         </span>
-        <span className={`text-[11px] font-medium rounded-full px-2.5 py-0.5 ring-1 ring-inset ${a.chip}`}>
-          {c.category}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={onTogglePin}
+            className={`rounded-md p-1.5 transition ${
+              pinned
+                ? 'bg-indigo-50 text-indigo-600'
+                : 'text-slate-300 hover:bg-slate-100 hover:text-slate-500'
+            }`}
+            aria-label={pinned ? `Unpin ${c.title}` : `Pin ${c.title} to workbench`}
+            aria-pressed={pinned}
+          >
+            <Pin className="h-4 w-4" aria-hidden="true" />
+          </button>
+          <span className={`text-[11px] font-medium rounded-full px-2.5 py-0.5 ring-1 ring-inset ${a.chip}`}>
+            {c.category}
+          </span>
+        </div>
       </div>
 
       {/* Title is the navigation affordance for the header region */}
@@ -447,7 +666,7 @@ function CalculatorCard({
             type="button"
             onClick={() => onShare()}
             className="rounded-md px-2 py-1 text-xs font-medium text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-            aria-label={`Share ${c.title}`}
+            aria-label={`Copy link to ${c.title}`}
           >
             Share
           </button>
@@ -469,8 +688,8 @@ const benefits = [
     icon: ShieldCheck,
   },
   {
-    title: 'No sign-up, ever',
-    body: 'No accounts, no paywalls, no email gates. Bookmark a calculator and use it anytime.',
+    title: 'Remembers your numbers',
+    body: 'Pins, recent tools, saved inputs and scenarios live in your browser — your workbench picks up where you left off.',
     icon: Zap,
   },
   {

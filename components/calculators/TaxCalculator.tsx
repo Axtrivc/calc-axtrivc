@@ -1,21 +1,28 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Info, RotateCcw, Trophy } from 'lucide-react';
 import NumberInput, { AnimatedNumber, CopyButton, SliderControl } from '@/components/NumberInput';
+import ScenarioButtons from '@/components/ScenarioButtons';
 import { compareEntities, TAX_CONSTANTS } from '@/lib/tax';
 import { usd, pct, numFmt } from '@/lib/format';
+import { useWorkbenchInputs, recordRecent } from '@/lib/workbench';
+
+const SLUG = 'llc-vs-ccorp-tax-calculator';
+const DEFAULTS = { profit: 200000 };
 
 export default function TaxCalculator() {
-  const [profit, setProfit] = useState(200000);
+  const { values, set, reset } = useWorkbenchInputs(SLUG, DEFAULTS);
+  const profit = values.profit;
+  const setProfit = (n: number) => set('profit', n);
+
+  useEffect(() => {
+    recordRecent(SLUG);
+  }, []);
 
   const r = useMemo(() => compareEntities(profit), [profit]);
   const llcWins = r.winner === 'llc';
   const tie = r.winner === 'tie';
-
-  function reset() {
-    setProfit(200000);
-  }
 
   const maxRate = 40;
   const llcBarW = Math.min(100, (r.llc.effectiveRate / maxRate) * 100);
@@ -73,6 +80,12 @@ export default function TaxCalculator() {
             Reset
           </button>
           <CopyButton text={copyText} label="Copy result" />
+          <ScenarioButtons
+            slug={SLUG}
+            shortTitle="LLC vs C-Corp"
+            href="/llc-vs-ccorp-tax-calculator/"
+            params={{ profit }}
+          />
         </div>
       </div>
 
