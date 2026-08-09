@@ -12,8 +12,10 @@ html {
 }
 
 body {
-  @apply bg-slate-50 text-slate-800 antialiased;
+  @apply bg-slate-100 text-slate-800 antialiased;
   text-rendering: optimizeLegibility;
+  background-image: radial-gradient(ellipse at top, rgba(241, 245, 249, 0.9), transparent 60%);
+  background-attachment: fixed;
 }
 
 /* Reusable component classes */
@@ -75,9 +77,11 @@ body {
 }
 
 /* ===========================
-   Custom range slider (clean)
-   Native input[type=range] with smooth custom thumb. Fluid dragging is
-   handled by native min/max/step (no JS position remap on linear sliders).
+   Custom range slider (workspace grade)
+   Native input[type=range] with a polished thumb. Fluid dragging is owned by
+   the browser (native min/max/step drive the thumb on linear sliders; log
+   sliders never round the value). The InteractiveSlider component also stops
+   pointer-event propagation so parent card links never intercept drags.
    =========================== */
 input[type='range'].ws-slider {
   -webkit-appearance: none;
@@ -88,13 +92,17 @@ input[type='range'].ws-slider {
   background: linear-gradient(
     to right,
     #4f46e5 0%,
-    #4f46e5 var(--fill, 50%),
+    #6366f1 var(--fill, 50%),
     #e2e8f0 var(--fill, 50%),
     #e2e8f0 100%
   );
   outline: none;
-  cursor: pointer;
+  cursor: grab;
   transition: background 0.05s linear;
+  touch-action: pan-y;
+}
+input[type='range'].ws-slider:active {
+  cursor: grabbing;
 }
 input[type='range'].ws-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -106,14 +114,16 @@ input[type='range'].ws-slider::-webkit-slider-thumb {
   border: 2px solid #4f46e5;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(79, 70, 229, 0.08);
   cursor: grab;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s ease, box-shadow 0.16s ease;
 }
 input[type='range'].ws-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25), 0 0 0 4px rgba(79, 70, 229, 0.12);
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25), 0 0 0 5px rgba(79, 70, 229, 0.12);
+  transform: scale(1.06);
 }
 input[type='range'].ws-slider:active::-webkit-slider-thumb {
   cursor: grabbing;
-  transform: scale(1.1);
+  transform: scale(1.12);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35), 0 0 0 6px rgba(79, 70, 229, 0.16);
 }
 input[type='range'].ws-slider:focus::-webkit-slider-thumb {
   box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
@@ -126,12 +136,21 @@ input[type='range'].ws-slider::-moz-range-thumb {
   border: 2px solid #4f46e5;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   cursor: grab;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform 0.12s ease, box-shadow 0.16s ease;
+}
+input[type='range'].ws-slider:active::-moz-range-thumb {
+  cursor: grabbing;
+  transform: scale(1.12);
 }
 input[type='range'].ws-slider::-moz-range-track {
   height: 6px;
   border-radius: 9999px;
   background: transparent;
+}
+input[type='range'].ws-slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, #4f46e5, #6366f1);
 }
 
 /* ===========================

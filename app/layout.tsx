@@ -76,7 +76,7 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#F8FAFC',
+  themeColor: '#F1F5F9',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

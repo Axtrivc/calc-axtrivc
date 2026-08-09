@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Info } from 'lucide-react';
 
 /**
@@ -11,7 +12,7 @@ import { Check, Info } from 'lucide-react';
  *   toast.show('Copied to clipboard');
  *
  * Wrap the tree in <ToastProvider>. SSG-safe: the portal-less overlay only
- * renders on the client after mount.
+ * renders on the client after mount. Toasts animate in/out with framer-motion.
  */
 
 type ToastItem = { id: number; message: string; tone: 'success' | 'info' };
@@ -49,20 +50,31 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           aria-atomic="true"
           className="pointer-events-none fixed bottom-6 right-6 z-[100] flex flex-col items-end gap-2"
         >
-          {items.map((it) => (
-            <div
-              key={it.id}
-              className="animate-slide-in-right pointer-events-auto flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-lg"
-              role="status"
-            >
-              {it.tone === 'success' ? (
-                <Check className="h-4 w-4 text-indigo-600" aria-hidden="true" />
-              ) : (
-                <Info className="h-4 w-4 text-indigo-600" aria-hidden="true" />
-              )}
-              <span className="text-sm font-medium text-slate-700">{it.message}</span>
-            </div>
-          ))}
+          <AnimatePresence>
+            {items.map((it) => (
+              <motion.div
+                key={it.id}
+                layout
+                initial={{ opacity: 0, y: 16, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                className="pointer-events-auto flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white/90 px-4 py-3 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl"
+                role="status"
+              >
+                {it.tone === 'success' ? (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100">
+                    <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                  </span>
+                ) : (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-100">
+                    <Info className="h-3.5 w-3.5 text-indigo-600" aria-hidden="true" />
+                  </span>
+                )}
+                <span className="text-sm font-medium text-slate-700">{it.message}</span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </ToastContext.Provider>
