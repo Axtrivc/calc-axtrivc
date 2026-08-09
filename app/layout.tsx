@@ -3,8 +3,6 @@ import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ToastProvider } from '@/components/Toast';
-import MouseSpotlight from '@/components/MouseSpotlight';
-import HudTicker from '@/components/HudTicker';
 import { siteConfig } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -44,7 +42,7 @@ export const metadata: Metadata = {
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
     other: [
-      { rel: 'mask-icon', url: '/favicon.svg', color: '#00F2FE' },
+      { rel: 'mask-icon', url: '/favicon.svg', color: '#4F46E5' },
     ],
   },
   openGraph: {
@@ -78,7 +76,7 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#0D1117',
+  themeColor: '#F8FAFC',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -118,9 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="flex min-h-full flex-col font-sans">
         <ToastProvider>
-          <MouseSpotlight />
           <Header />
-          <HudTicker />
           <main className="flex-1">{children}</main>
           <Footer />
         </ToastProvider>

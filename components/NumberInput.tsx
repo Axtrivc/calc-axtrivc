@@ -58,7 +58,7 @@ export default function NumberInput({
       </label>
       <div className="relative">
         {prefix && (
-          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-cyan-400/80">
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
             {prefix}
           </span>
         )}
@@ -76,7 +76,7 @@ export default function NumberInput({
           className={`input-field ${prefix ? 'pl-7' : ''} ${suffix ? 'pr-12' : ''}`}
         />
         {suffix && (
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 font-mono text-xs text-slate-500">
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 font-mono text-xs text-slate-400">
             {suffix}
           </span>
         )}
@@ -89,12 +89,12 @@ export default function NumberInput({
 /**
  * Animated numeric readout: smoothly interpolates from the previous value to
  * the next whenever `value` changes (rolling-number effect). Uses requestAnimationFrame
- * with an ease-out curve.
+ * with an ease-out curve. Short duration keeps it springy without lagging drags.
  */
 export function AnimatedNumber({
   value,
   format,
-  duration = 650,
+  duration = 400,
   className,
 }: {
   value: number;
@@ -138,10 +138,17 @@ export function AnimatedNumber({
 }
 
 /**
- * Slider + quick preset badges control. Replaces plain numeric inputs with a
- * HUD-style range slider and one-tap preset buttons.
+ * Slider + quick preset pill buttons. Designed for FLUID, jank-free dragging:
  *
- * `logarithmic` makes the slider feel natural across huge ranges (e.g. $100 → $1M).
+ *  - Linear sliders (logarithmic=false) use the NATIVE min/max/step on the
+ *    <input type="range">. The browser handles thumb positioning directly, so
+ *    the handle always tracks the cursor with zero remap round-trips.
+ *  - Logarithmic sliders remap a 0..1000 position to value space (for huge
+ *    ranges like $100→$10M) but NEVER round the value — the exact float is
+ *    passed straight up, so dragging stays smooth and continuous.
+ *
+ * The fill track is driven by a CSS var updated each render; the slider itself
+ * is uncontrolled-friendly (native handles pointer capture during drags).
  */
 export function SliderControl({
   id,
@@ -172,82 +179,74 @@ export function SliderControl({
   logarithmic?: boolean;
   formatValue?: (n: number) => string;
 }) {
-  // Convert real value <-> slider position (0..1000 for fine control)
-  const SLIDER_MAX = 1000;
-  const toSlider = (v: number) => {
-    const clamped = Math.min(max, Math.max(min, v));
-    if (logarithmic && min > 0 && max > min) {
-      const lmin = Math.log(min);
-      const lmax = Math.log(max);
-      return Math.round(((Math.log(clamped) - lmin) / (lmax - lmin)) * SLIDER_MAX);
-    }
-    return Math.round(((clamped - min) / (max - min)) * SLIDER_MAX);
-  };
-  const fromSlider = (p: number) => {
-    if (logarithmic && min > 0 && max > min) {
-      const lmin = Math.log(min);
-      const lmax = Math.log(max);
-      return Math.exp(lmin + (p / SLIDER_MAX) * (lmax - lmin));
-    }
-    return min + (p / SLIDER_MAX) * (max - min);
-  };
+  const fmt = (n: number) =>
+    formatValue
+      ? formatValue(n)
+      : `${prefix ?? ''}${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}${suffix ?? ''}`;
 
-  const pos = toSlider(value);
-  const displayed = formatValue
-    ? formatValue(value)
-    : `${prefix ?? ''}${value.toLocaleString('en-US', { maximumFractionDigits: 2 })}${suffix ?? ''}`;
+  const pct = (() => {
+    const clamped = Math.min(max, Math.max(min, value));
+    if (logarithmic && min > 0 && max > min) {
+      const lmin = Math.log(min);
+      const lmax = Math.log(max);
+      return Math.max(0, Math.min(100, ((Math.log(Math.max(min, clamped)) - lmin) / (lmax - lmin)) * 100));
+    }
+    return Math.max(0, Math.min(100, ((clamped - min) / (max - min)) * 100));
+  })();
 
   return (
     <div>
-      <div className="mb-2 flex items-baseline justify-between">
-        <label htmlFor={id} className="label mb-0">
-          {label}
-        </label>
-        <span className="readout text-sm font-semibold text-cyan-300">{displayed}</span>
-      </div>
-      <input
-        id={id}
-        type="range"
-        min={0}
-        max={SLIDER_MAX}
-        step={1}
-        value={pos}
-        onChange={(e) => {
-          const next = fromSlider(Number(e.target.value));
-          // snap to step on linear sliders
-          const snapped = logarithmic ? next : Math.round(next / step) * step;
-          onChange(Math.min(max, Math.max(min, snapped)));
-        }}
-        className="cyber-slider"
-        style={{ ['--fill' as string]: `${(pos / SLIDER_MAX) * 100}%` }}
-        aria-label={label}
-      />
-      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-600">
-        <span>{formatValue ? formatValue(min) : `${prefix ?? ''}${min.toLocaleString()}${suffix ?? ''}`}</span>
-        <span>{formatValue ? formatValue(max) : `${prefix ?? ''}${max.toLocaleString()}${suffix ?? ''}`}</span>
+      {label && (
+        <div className="mb-2 flex items-baseline justify-between">
+          <label htmlFor={id} className="label mb-0">
+            {label}
+          </label>
+          <span className="readout text-sm font-semibold text-indigo-600">{fmt(value)}</span>
+        </div>
+      )}
+
+      {logarithmic ? (
+        <LogSlider id={id} value={value} onChange={onChange} min={min} max={max} />
+      ) : (
+        // NATIVE range — min/max/step drive the handle directly. No position remap
+        // means zero thumb-fighting during continuous drags.
+        <input
+          id={id}
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={Math.min(max, Math.max(min, value))}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="ws-slider"
+          style={{ ['--fill' as string]: `${pct}%` }}
+          aria-label={label || undefined}
+        />
+      )}
+
+      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-400">
+        <span>{fmt(min)}</span>
+        <span>{fmt(max)}</span>
       </div>
 
       {presets && presets.length > 0 && (
         <div className="mt-2.5 flex flex-wrap gap-1.5">
           {presets.map((p) => {
             const active = Math.abs(p - value) < (logarithmic ? p * 0.001 : step);
-            const label = `${prefix ?? ''}${p.toLocaleString('en-US', {
-              notation: p >= 1000000 ? 'compact' : 'standard',
-              maximumFractionDigits: 1,
-            })}${suffix ?? ''}`;
+            const plabel = `${prefix ?? ''}${p.toLocaleString('en-US', { notation: p >= 1000000 ? 'compact' : 'standard', maximumFractionDigits: 1 })}${suffix ?? ''}`;
             return (
               <button
                 key={p}
                 type="button"
                 onClick={() => onChange(p)}
-                className={`rounded-md px-2.5 py-1 font-mono text-xs font-medium transition ${
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-150 ${
                   active
-                    ? 'border border-cyan-500/60 bg-cyan-500/15 text-cyan-300 shadow-glow-cyan'
-                    : 'border border-slate-700 bg-base-700/50 text-slate-400 hover:border-cyan-500/40 hover:text-cyan-300'
+                    ? 'border border-indigo-500 bg-indigo-50 text-indigo-700'
+                    : 'border border-slate-200 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600'
                 }`}
                 aria-pressed={active}
               >
-                {label}
+                {plabel}
               </button>
             );
           })}
@@ -259,7 +258,53 @@ export function SliderControl({
   );
 }
 
-/** Copy-to-clipboard button with HUD toast confirmation. */
+/**
+ * Logarithmic slider: position (0..1000) ↔ value via log scale. Crucially the
+ * value is NOT rounded on change, so dragging is continuous and smooth.
+ */
+function LogSlider({
+  id,
+  value,
+  onChange,
+  min,
+  max,
+}: {
+  id: string;
+  value: number;
+  onChange: (n: number) => void;
+  min: number;
+  max: number;
+}) {
+  const POS_MAX = 1000;
+  const lmin = Math.log(min);
+  const lmax = Math.log(max);
+
+  const toPos = (v: number) => {
+    const c = Math.min(max, Math.max(min, v));
+    return Math.round(((Math.log(Math.max(min, c)) - lmin) / (lmax - lmin)) * POS_MAX);
+  };
+  const fromPos = (p: number) => Math.exp(lmin + (p / POS_MAX) * (lmax - lmin));
+
+  const pos = toPos(value);
+  return (
+    <input
+      id={id}
+      type="range"
+      min={0}
+      max={POS_MAX}
+      step={1}
+      value={pos}
+      onChange={(e) => {
+        // Pass the EXACT float up — never round, or the thumb fights the cursor.
+        onChange(fromPos(Number(e.target.value)));
+      }}
+      className="ws-slider"
+      style={{ ['--fill' as string]: `${(pos / POS_MAX) * 100}%` }}
+    />
+  );
+}
+
+/** Copy-to-clipboard button with toast confirmation. */
 export function CopyButton({
   text,
   label = 'Copy result',
@@ -277,7 +322,6 @@ export function CopyButton({
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
       } else {
-        // fallback for older browsers
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.style.position = 'fixed';
@@ -302,7 +346,7 @@ export function CopyButton({
       className={`btn-ghost ${className}`}
       aria-label={label}
     >
-      <Copy className="h-4 w-4 text-cyan-400" aria-hidden="true" />
+      <Copy className="h-4 w-4 text-indigo-500" aria-hidden="true" />
       {label}
     </button>
   );
@@ -324,22 +368,22 @@ export function StatCard({
 }) {
   return (
     <div
-      className={`rounded-xl border p-4 backdrop-blur transition ${
+      className={`rounded-xl border p-4 transition ${
         emphasis
-          ? 'border-cyan-500/40 bg-cyan-500/5 shadow-glow-cyan'
-          : 'border-slate-800 bg-base-700/40'
+          ? 'border-indigo-200 bg-indigo-50/60'
+          : 'border-slate-200 bg-slate-50/60'
       }`}
     >
       <div
         className={`text-xs font-medium uppercase tracking-wide ${
-          emphasis ? 'text-cyan-400' : 'text-slate-500'
+          emphasis ? 'text-indigo-600' : 'text-slate-500'
         }`}
       >
         {label}
       </div>
       <div
         className={`mt-1 readout text-2xl font-bold ${
-          emphasis ? 'text-cyan-300 text-glow-cyan' : 'text-slate-100'
+          emphasis ? 'text-indigo-700' : 'text-slate-900'
         }`}
       >
         {value}

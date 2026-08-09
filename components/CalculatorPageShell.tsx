@@ -15,39 +15,12 @@ const iconMap: Record<string, LucideIcon> = {
   Building2,
 };
 
-// Cyber accent map: each calculator gets its own neon signature.
-const accentMap: Record<
-  string,
-  { grad: string; ring: string; chip: string; glow: string; text: string }
-> = {
-  indigo: {
-    grad: 'from-cyan-500 to-blue-600',
-    ring: 'shadow-glow-cyan',
-    chip: 'bg-cyan-500/10 text-cyan-300 ring-1 ring-inset ring-cyan-500/30',
-    glow: 'shadow-glow-cyan',
-    text: 'text-cyan-400',
-  },
-  emerald: {
-    grad: 'from-emerald-500 to-teal-500',
-    ring: 'shadow-glow-green',
-    chip: 'bg-emerald-500/10 text-emerald-300 ring-1 ring-inset ring-emerald-500/30',
-    glow: 'shadow-glow-green',
-    text: 'text-emerald-400',
-  },
-  slate: {
-    grad: 'from-purple-500 to-fuchsia-600',
-    ring: 'shadow-glow-purple',
-    chip: 'bg-purple-500/10 text-purple-300 ring-1 ring-inset ring-purple-500/30',
-    glow: 'shadow-glow-purple',
-    text: 'text-purple-400',
-  },
-  amber: {
-    grad: 'from-amber-500 to-orange-600',
-    ring: 'shadow-glow-cyan',
-    chip: 'bg-amber-500/10 text-amber-300 ring-1 ring-inset ring-amber-500/30',
-    glow: '',
-    text: 'text-amber-400',
-  },
+// Clean workspace accent map: indigo / sky / emerald / amber.
+const accentMap: Record<string, { bg: string; text: string; soft: string }> = {
+  indigo: { bg: 'bg-indigo-600', text: 'text-indigo-600', soft: 'bg-indigo-50 text-indigo-700' },
+  emerald: { bg: 'bg-emerald-600', text: 'text-emerald-600', soft: 'bg-emerald-50 text-emerald-700' },
+  slate: { bg: 'bg-sky-600', text: 'text-sky-600', soft: 'bg-sky-50 text-sky-700' },
+  amber: { bg: 'bg-amber-600', text: 'text-amber-600', soft: 'bg-amber-50 text-amber-700' },
 };
 
 export default function CalculatorPageShell({
@@ -70,29 +43,20 @@ export default function CalculatorPageShell({
 
   return (
     <div className="container-page py-8 sm:py-12">
-      <nav
-        className="mb-6 flex items-center gap-1.5 text-sm text-slate-500"
-        aria-label="Breadcrumb"
-      >
-        <Link href="/" className="transition hover:text-cyan-300">
-          Home
-        </Link>
+      <nav className="mb-6 flex items-center gap-1.5 text-sm text-slate-500" aria-label="Breadcrumb">
+        <Link href="/" className="transition hover:text-indigo-600">Home</Link>
         <ChevronRight className="h-4 w-4" aria-hidden="true" />
-        <span className="text-slate-300">{title}</span>
+        <span className="text-slate-700">{title}</span>
       </nav>
 
       <header className="mb-8 flex animate-fade-in-up items-start gap-4">
-        <span
-          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${a.grad} text-white ${a.glow}`}
-        >
+        <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${a.bg} text-white shadow-sm`}>
           <Icon className="h-7 w-7" aria-hidden="true" />
         </span>
         <div>
-          <div className={`chip mb-2 ${a.chip}`}>{category}</div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            {title}
-          </h1>
-          <p className="mt-2 max-w-2xl text-base text-slate-400 sm:text-lg">{tagline}</p>
+          <div className={`chip mb-2 ${a.soft}`}>{category}</div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">{title}</h1>
+          <p className="mt-2 max-w-2xl text-base text-slate-500 sm:text-lg">{tagline}</p>
         </div>
       </header>
 

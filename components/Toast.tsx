@@ -52,15 +52,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           {items.map((it) => (
             <div
               key={it.id}
-              className="animate-slide-in-right pointer-events-auto flex items-center gap-2.5 rounded-lg border border-cyan-500/40 bg-base-700/90 px-4 py-3 shadow-glow-cyan backdrop-blur-xl"
+              className="animate-slide-in-right pointer-events-auto flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-lg"
               role="status"
             >
               {it.tone === 'success' ? (
-                <Check className="h-4 w-4 text-cyan-400" aria-hidden="true" />
+                <Check className="h-4 w-4 text-indigo-600" aria-hidden="true" />
               ) : (
-                <Info className="h-4 w-4 text-cyan-400" aria-hidden="true" />
+                <Info className="h-4 w-4 text-indigo-600" aria-hidden="true" />
               )}
-              <span className="font-mono text-sm text-slate-100">{it.message}</span>
+              <span className="text-sm font-medium text-slate-700">{it.message}</span>
             </div>
           ))}
         </div>

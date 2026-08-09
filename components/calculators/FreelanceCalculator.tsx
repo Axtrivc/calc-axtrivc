@@ -39,8 +39,8 @@ export default function FreelanceCalculator() {
     <div className="grid gap-6 lg:grid-cols-5">
       {/* Inputs */}
       <div className="card lg:col-span-3 p-6 sm:p-8">
-        <h2 className="mb-1 text-base font-semibold text-white">Your numbers</h2>
-        <p className="mb-6 text-sm text-slate-400">All annual figures unless noted.</p>
+        <h2 className="mb-1 text-base font-semibold text-slate-900">Your numbers</h2>
+        <p className="mb-6 text-sm text-slate-500">All annual figures unless noted.</p>
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
@@ -176,8 +176,8 @@ export default function FreelanceCalculator() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-start gap-2 rounded-lg border border-slate-800 bg-base-800/60 p-3 text-xs text-slate-400">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-cyan-500/70" aria-hidden="true" />
+        <div className="mt-6 flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
           <p>
             The math: <code>hourly = (takeHome + expenses) / (1 − tax%) / (billable weeks × weekly hours)</code>.
             {r.utilization < 50 && r.hourlyRate > 0 && (
@@ -188,7 +188,7 @@ export default function FreelanceCalculator() {
 
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={reset} className="btn-ghost">
-            <RotateCcw className="h-4 w-4 text-cyan-400" aria-hidden="true" />
+            <RotateCcw className="h-4 w-4 text-indigo-500" aria-hidden="true" />
             Reset
           </button>
           <CopyButton text={copyText} label="Copy result" />
@@ -198,18 +198,14 @@ export default function FreelanceCalculator() {
       {/* Results */}
       <div className="lg:col-span-2 space-y-4">
         <div className="card p-6 sm:p-8">
-          <span className="text-xs font-semibold uppercase tracking-wide text-emerald-400">
+          <span className="text-xs font-semibold uppercase tracking-wide text-emerald-600">
             Your minimum rate
           </span>
-          <div className="mt-2 text-5xl font-extrabold tracking-tight text-white">
-            <AnimatedNumber
-              value={r.hourlyRate}
-              format={(n) => usd(n, 0)}
-              className="readout text-glow-green text-emerald-400"
-            />
-            <span className="ml-1 text-base font-medium text-slate-500">/hr</span>
+          <div className="mt-2 text-5xl font-extrabold tracking-tight text-slate-900">
+            <AnimatedNumber value={r.hourlyRate} format={(n) => usd(n, 0)} className="readout text-emerald-600" />
+            <span className="ml-1 text-base font-medium text-slate-400">/hr</span>
           </div>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-slate-500">
             Charge at least this much to hit your target. Most freelancers add a 15–25% margin on top.
           </p>
         </div>
@@ -229,48 +225,48 @@ export default function FreelanceCalculator() {
         </div>
 
         <div className="card p-6 sm:p-8">
-          <h3 className="text-sm font-semibold text-white">The math behind your rate</h3>
+          <h3 className="text-sm font-semibold text-slate-900">The math behind your rate</h3>
           <dl className="mt-3 space-y-2.5 text-sm">
             <div className="flex justify-between">
-              <dt className="text-slate-400">Take-home target</dt>
-              <dd className="readout font-semibold text-slate-100">{usd(takeHome, 0)}</dd>
+              <dt className="text-slate-600">Take-home target</dt>
+              <dd className="readout font-semibold text-slate-900">{usd(takeHome, 0)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-400">+ Business expenses</dt>
-              <dd className="readout font-semibold text-slate-100">{usd(expenses, 0)}</dd>
+              <dt className="text-slate-600">+ Business expenses</dt>
+              <dd className="readout font-semibold text-slate-900">{usd(expenses, 0)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-400">÷ (1 − tax rate)</dt>
-              <dd className="readout font-semibold text-slate-100">{pct(taxRate, 0)}</dd>
+              <dt className="text-slate-600">÷ (1 − tax rate)</dt>
+              <dd className="readout font-semibold text-slate-900">{pct(taxRate, 0)}</dd>
             </div>
-            <div className="flex justify-between border-t border-slate-800 pt-2.5">
-              <dt className="font-medium text-slate-300">Gross revenue needed</dt>
-              <dd className="readout font-bold text-cyan-400">
+            <div className="flex justify-between border-t border-slate-200 pt-2.5">
+              <dt className="font-medium text-slate-700">Gross revenue needed</dt>
+              <dd className="readout font-bold text-indigo-600">
                 <AnimatedNumber value={r.grossNeeded} format={(n) => usd(n, 0)} />
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-400">Billable weeks/yr</dt>
-              <dd className="readout font-semibold text-slate-100">
+              <dt className="text-slate-600">Billable weeks/yr</dt>
+              <dd className="readout font-semibold text-slate-900">
                 <AnimatedNumber value={r.billableWeeks} format={(n) => numFmt(n, 1)} />
               </dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-400">Billable hours/yr</dt>
-              <dd className="readout font-semibold text-slate-100">
+              <dt className="text-slate-600">Billable hours/yr</dt>
+              <dd className="readout font-semibold text-slate-900">
                 <AnimatedNumber value={r.billableHours} format={(n) => numFmt(n, 0)} />
               </dd>
             </div>
-            <div className="flex justify-between border-t border-slate-800 pt-2.5">
-              <dt className="font-medium text-slate-300">Required hourly rate</dt>
-              <dd className="readout font-bold text-emerald-400">
+            <div className="flex justify-between border-t border-slate-200 pt-2.5">
+              <dt className="font-medium text-slate-700">Required hourly rate</dt>
+              <dd className="readout font-bold text-emerald-600">
                 <AnimatedNumber value={r.hourlyRate} format={(n) => usd(n, 0)} />/hr
               </dd>
             </div>
           </dl>
         </div>
 
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-amber-200/90 backdrop-blur">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
           <strong className="font-semibold">Reality check:</strong> only {numFmt(r.billableHours, 0)} of 2,080 working hours are billable ({pct(r.utilization, 0)}). The other time goes to finding clients, admin, and unpaid revisions — and that's exactly why your rate can't match a salaried employee's.
         </div>
       </div>
