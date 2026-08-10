@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue } from 'framer-motion';
 import { computeFee } from '@/lib/stripe';
 import { computeFreelanceRate } from '@/lib/freelance';
 import { computeRunway } from '@/lib/runway';
@@ -219,6 +219,15 @@ export function RunwayMiniWidget() {
   const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${px(i)} ${y(p.cash)}`).join(' ');
   const areaPath = `${linePath} L ${px(pts.length - 1)} ${H - pad} L ${px(0)} ${H - pad} Z`;
 
+  // Seed `d` with motion values so framer-motion always has a valid string
+  // for it. With a plain string prop, the animate pipeline creates the `d`
+  // motion value lazily with `undefined` (getValue maps its null default to
+  // undefined) and a frame can then write d="undefined" to the DOM — the
+  // console error this fixes. animate={{ d }} still drives the same spring
+  // between path strings on slider drags.
+  const lineD = useMotionValue(linePath);
+  const areaD = useMotionValue(areaPath);
+
   const months = r.months;
   const tone = months === null ? 'emerald' : months >= 18 ? 'emerald' : months >= 12 ? 'amber' : 'rose';
   const toneColor = tone === 'emerald' ? '#10B981' : tone === 'amber' ? '#F59E0B' : '#F43F5E';
@@ -280,13 +289,13 @@ export function RunwayMiniWidget() {
             </filter>
           </defs>
           <motion.path
-            d={areaPath}
+            d={areaD}
             fill="url(#runway-fill)"
             animate={{ d: areaPath }}
             transition={{ type: 'spring', stiffness: 120, damping: 24, mass: 0.7 }}
           />
           <motion.path
-            d={linePath}
+            d={lineD}
             fill="none"
             stroke="url(#runway-line)"
             strokeWidth="2"
