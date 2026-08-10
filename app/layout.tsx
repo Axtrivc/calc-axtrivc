@@ -129,8 +129,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             the page a sense of living atmosphere instead of a flat fill. Purely
             decorative: aria-hidden + pointer-events-none. */}
         <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
-          <div className="animate-breathe-indigo absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-indigo-400/25 blur-[120px]" />
-          <div className="animate-breathe-emerald absolute -bottom-52 -right-40 h-[600px] w-[600px] rounded-full bg-emerald-400/20 blur-[120px]" />
+          <div className="animate-breathe-indigo absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-indigo-400/20 blur-[180px]" />
+          <div className="animate-breathe-emerald absolute -bottom-52 -right-40 h-[600px] w-[600px] rounded-full bg-emerald-400/15 blur-[180px]" />
         </div>
         <ToastProvider>
           <Header />

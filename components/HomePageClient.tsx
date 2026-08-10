@@ -215,7 +215,7 @@ export default function HomePageClient() {
   return (
     <div className="cursor-spotlight relative">
       {/* ===== Workspace command bar (top status strip) ===== */}
-      <section className="border-b border-slate-200/70 bg-white/60 backdrop-blur-xl">
+      <section className="bg-transparent">
         <div className="container-page flex h-9 items-center justify-between text-[11px] font-medium text-slate-500">
           <div className="flex items-center gap-2">
             <span className="relative flex h-1.5 w-1.5">
@@ -231,8 +231,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ===== Hero ===== */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-200/60 via-slate-50 to-slate-100" />
+      <section className="relative overflow-hidden bg-transparent">
         <div className="container-page relative py-12 sm:py-16">
           <div className="mx-auto max-w-3xl text-center">
             <motion.div
@@ -516,7 +515,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ===== Benefits ===== */}
-      <section className="border-t border-slate-200/70 bg-white/60 backdrop-blur-xl">
+      <section className="bg-transparent">
         <div className="container-page py-14">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
