@@ -112,7 +112,7 @@ export default function CalculatorPageShell({
             <div className="flex items-start gap-3">
               <FunctionSquare className={`mt-0.5 h-4 w-4 shrink-0 ${a.text}`} aria-hidden="true" />
               <div>
-                <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                   Core formula
                 </dt>
                 <dd className="readout mt-1 text-sm font-semibold text-slate-800">
@@ -123,7 +123,7 @@ export default function CalculatorPageShell({
             <div className="flex items-start gap-3">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" aria-hidden="true" />
               <div>
-                <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                   Data basis
                 </dt>
                 <dd className="mt-1 text-sm leading-snug text-slate-600">{calc.dataBasis}</dd>
@@ -132,7 +132,7 @@ export default function CalculatorPageShell({
             <div className="flex items-start gap-3">
               <Laptop className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
               <div>
-                <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <dt className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                   Privacy &amp; availability
                 </dt>
                 <dd className="mt-1 text-sm leading-snug text-slate-600">

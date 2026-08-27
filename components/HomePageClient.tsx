@@ -322,7 +322,7 @@ export default function HomePageClient() {
               <Sparkles className="h-4 w-4 text-indigo-500" aria-hidden="true" />
               My workbench
             </h2>
-            <span className="text-[11px] font-medium text-slate-400">
+            <span className="text-[11px] font-medium text-slate-500">
               Private — stored only in this browser
             </span>
           </div>
@@ -340,7 +340,7 @@ export default function HomePageClient() {
             <div className="grid gap-4 lg:grid-cols-3">
               {/* Pinned */}
               <div className="rounded-xl border border-white/70 bg-white/50 p-4 backdrop-blur">
-                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                   <Pin className="h-3.5 w-3.5" aria-hidden="true" /> Pinned
                 </h3>
                 {pinnedCalcs.length === 0 ? (
@@ -367,7 +367,7 @@ export default function HomePageClient() {
 
               {/* Recent */}
               <div className="rounded-xl border border-white/70 bg-white/50 p-4 backdrop-blur">
-                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                   <History className="h-3.5 w-3.5" aria-hidden="true" /> Recent
                 </h3>
                 {recentCalcs.length === 0 ? (
@@ -382,7 +382,7 @@ export default function HomePageClient() {
                         >
                           {r.calc!.shortTitle ?? r.calc!.title}
                         </Link>
-                        <span className="shrink-0 font-mono text-[10px] text-slate-400">{relTime(r.ts)}</span>
+                        <span className="shrink-0 font-mono text-[10px] text-slate-500">{relTime(r.ts)}</span>
                       </li>
                     ))}
                   </ul>
@@ -391,7 +391,7 @@ export default function HomePageClient() {
 
               {/* Scenarios */}
               <div className="rounded-xl border border-white/70 bg-white/50 p-4 backdrop-blur">
-                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                <h3 className="mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                   <Bookmark className="h-3.5 w-3.5" aria-hidden="true" /> Saved scenarios
                 </h3>
                 {scenarios.length === 0 ? (
@@ -406,7 +406,7 @@ export default function HomePageClient() {
                           <span className="block truncate text-sm font-medium text-slate-700 transition group-hover:text-indigo-600">
                             {s.name}
                           </span>
-                          <span className="block truncate font-mono text-[10px] text-slate-400">
+                          <span className="block truncate font-mono text-[10px] text-slate-500">
                             {scenarioSummary(s)}
                           </span>
                         </Link>

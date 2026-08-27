@@ -61,7 +61,7 @@ export default function FreelanceCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="take-home-slider"
-                label=""
+                label="" ariaLabel="Target annual take-home pay"
                 value={takeHome}
                 onChange={setTakeHome}
                 min={10000}
@@ -87,7 +87,7 @@ export default function FreelanceCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="expenses-slider"
-                label=""
+                label="" ariaLabel="Annual business expenses"
                 value={expenses}
                 onChange={setExpenses}
                 min={0}
@@ -115,7 +115,7 @@ export default function FreelanceCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="tax-rate-slider"
-                label=""
+                label="" ariaLabel="Effective tax rate"
                 value={taxRate}
                 onChange={setTaxRate}
                 min={0}
@@ -141,7 +141,7 @@ export default function FreelanceCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="vacation-slider"
-                label=""
+                label="" ariaLabel="Vacation and public holidays"
                 value={vacation}
                 onChange={setVacation}
                 min={0}
@@ -167,7 +167,7 @@ export default function FreelanceCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="weekly-hours-slider"
-                label=""
+                label="" ariaLabel="Billable hours per week"
                 value={weeklyHours}
                 onChange={setWeeklyHours}
                 min={1}

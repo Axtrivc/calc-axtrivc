@@ -55,7 +55,7 @@ export function StripeMiniWidget() {
   return (
     <WidgetShell>
       <div className="mb-2.5 flex items-baseline justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
           Charge amount
         </span>
         <AnimateNumber
@@ -76,7 +76,7 @@ export function StripeMiniWidget() {
 
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div className="rounded-lg border border-white/70 bg-white/50 px-2.5 py-1.5 backdrop-blur">
-          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-400">Fee</div>
+          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-500">Fee</div>
           <AnimateNumber
             value={r.fee}
             format={(n) => `−${usd(n)}`}
@@ -84,7 +84,7 @@ export function StripeMiniWidget() {
           />
         </div>
         <div className="rounded-lg border border-white/70 bg-white/50 px-2.5 py-1.5 backdrop-blur">
-          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-400">You net</div>
+          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-500">You net</div>
           <AnimateNumber
             value={r.net}
             format={(n) => usd(n)}
@@ -111,7 +111,7 @@ export function StripeMiniWidget() {
           transition={{ type: 'spring', stiffness: 140, damping: 22, mass: 0.6 }}
         />
       </div>
-      <p className="mt-1.5 text-[10px] text-slate-400">
+      <p className="mt-1.5 text-[10px] text-slate-500">
         Domestic · 2.9% + $0.30 · you keep{' '}
         <AnimateNumber value={netPct} format={(n) => pct(n)} className="readout font-medium text-emerald-600" />{' '}
         · fee{' '}
@@ -187,7 +187,7 @@ export function FreelanceMiniWidget() {
           <AnimateNumber value={r.hourlyRate} format={(n) => `${usd(n, 0)}/hr`} />
         </span>
       </div>
-      <p className="mt-2 text-[10px] text-slate-400">
+      <p className="mt-2 text-[10px] text-slate-500">
         Day <span className="readout text-slate-600">{usd(r.dayRate, 0)}</span> · Month{' '}
         <span className="readout text-slate-600">{usd(r.monthlyRate, 0)}</span> · 30% tax · 25h/wk
       </p>
@@ -239,7 +239,7 @@ export function RunwayMiniWidget() {
   return (
     <WidgetShell>
       <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">Starting cash</span>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Starting cash</span>
         <AnimateNumber
           value={cash}
           format={(n) => usdCompact(n)}
@@ -257,7 +257,7 @@ export function RunwayMiniWidget() {
       />
 
       <div className="mt-3 mb-1.5 flex items-baseline justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">Cash trajectory</span>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Cash trajectory</span>
         <span className="readout text-sm font-bold" style={{ color: toneColor }}>
           {months === null ? '∞' : `${months}mo`}
         </span>
@@ -356,7 +356,7 @@ export function RunwayMiniWidget() {
           </div>
         )}
       </div>
-      <p className="mt-1.5 text-[10px] text-slate-400">
+      <p className="mt-1.5 text-[10px] text-slate-500">
         <span className="readout">{usdCompact(cash)}</span> cash · $50k burn · $10k MRR · +8%/mo
       </p>
     </WidgetShell>
@@ -522,7 +522,7 @@ export function TaxMiniWidget() {
           ariaLabel={`C-Corp effective tax rate ${pct(r.ccorp.effectiveRate, 1)}`}
         />
       </div>
-      <p className="mt-2 text-center text-[10px] text-slate-400">
+      <p className="mt-2 text-center text-[10px] text-slate-500">
         Federal tax · <span className="readout text-slate-600">{usd(r.delta, 0)}</span> delta · winner:{' '}
         <span
           className={

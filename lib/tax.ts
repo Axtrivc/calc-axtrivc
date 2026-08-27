@@ -7,8 +7,9 @@
 // Assumptions (clearly surfaced in the UI + article):
 //  - Single owner who takes 100% of profit (LLC) or 100% as dividends (C-Corp).
 //  - 2025 federal brackets, std deduction, and the QBI deduction for LLCs.
-//  - Self-employment tax: 15.3% on the first ~$176,100 of net SE income
-//    (2.9% Medicare on the rest), with the SE tax deduction applied.
+//  - Self-employment tax: 15.3% on the first ~$176,100 of the SE base
+//    (92.35% of net SE income, per Schedule SE; 2.9% Medicare on the rest),
+//    with half of SE tax deducted from ordinary income.
 //  - Corporate tax: flat 21%.
 //  - Qualified dividends: taxed at LTCG rates (0/15/20%), here using the
 //    2025 single-filer LTCG brackets.
@@ -39,6 +40,8 @@ const CORPORATE_RATE = 0.21;
 const QBI_RATE = 0.2; // 20% Qualified Business Income deduction
 const SE_RATE = 0.153; // 12.4% SS + 2.9% Medicare
 const MEDICARE_RATE = 0.029; // employee-side Medicare on amount above SS cap
+const SE_BASE_FACTOR = 0.9235; // Schedule SE: SE tax applies to 92.35% of net earnings
+const SE_MIN_BASE = 400; // no SE tax below $400 of net earnings
 
 function taxFromBrackets(taxableIncome: number, brackets: { rate: number; upTo: number }[]): number {
   let tax = 0;
@@ -55,20 +58,28 @@ function taxFromBrackets(taxableIncome: number, brackets: { rate: number; upTo: 
 /**
  * LLC / sole proprietorship pass-through model.
  *
- *  1. SE tax = 15.3% on first SE_CAP + 2.9% on the rest of net business income.
+ *  1. SE tax base = 92.35% of net business income (Schedule SE); tax is 15.3%
+ *     on the first SE_CAP of that base + 2.9% on the rest (none below $400).
  *  2. Half of SE tax is deductible against income.
- *  3. QBI deduction = 20% of (net business income − 1/2 SE tax), capped at
- *     20% of (taxable income − net cap gains) but we ignore cap gains for simplicity.
+ *  3. QBI deduction = 20% of (net business income − 1/2 SE tax), additionally
+ *     capped at 20% of taxable income (there are no capital gains here, so
+ *     the cap is just 20% of ordinary taxable income before the QBI deduction).
  *  4. Ordinary income tax applies to (net income − 1/2 SE tax − QBI deduction − std deduction).
  */
 function computeLlc(profit: number) {
   const netSE = profit; // net business income subject to SE tax
-  const seTaxOnPortion = Math.min(netSE, SE_CAP_2025) * SE_RATE + Math.max(0, netSE - SE_CAP_2025) * MEDICARE_RATE;
+  const seBase = netSE * SE_BASE_FACTOR;
+  const seTaxOnPortion =
+    seBase < SE_MIN_BASE
+      ? 0
+      : Math.min(seBase, SE_CAP_2025) * SE_RATE + Math.max(0, seBase - SE_CAP_2025) * MEDICARE_RATE;
   const halfSeTax = seTaxOnPortion / 2;
 
-  // QBI = net business income minus half of SE tax
+  // QBI = net business income minus half of SE tax; the deduction is also
+  // limited to 20% of taxable income before the deduction itself (§199A).
   const qbi = Math.max(0, netSE - halfSeTax);
-  const qbiDeduction = qbi * QBI_RATE;
+  const taxableBeforeQbi = Math.max(0, netSE - halfSeTax - STD_DEDUCTION_2025);
+  const qbiDeduction = Math.min(qbi * QBI_RATE, taxableBeforeQbi * QBI_RATE);
 
   const taxableIncome = Math.max(0, netSE - halfSeTax - qbiDeduction - STD_DEDUCTION_2025);
   const incomeTax = taxFromBrackets(taxableIncome, FED_BRACKETS_2025_SINGLE);

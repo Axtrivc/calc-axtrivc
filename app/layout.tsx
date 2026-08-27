@@ -1,9 +1,20 @@
 import type { Metadata } from 'next';
+import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import MotionProvider from '@/components/MotionProvider';
 import { ToastProvider } from '@/components/Toast';
 import { siteConfig } from '@/lib/site';
+
+// Self-hosted via next/font: preloaded, no render-blocking third-party
+// stylesheet, automatic display:swap.
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
+  weight: ['400', '500', '600', '700'],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -103,21 +114,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   };
 
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`h-full ${jetbrainsMono.variable}`}>
       <head>
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-        />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
@@ -132,11 +130,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="animate-breathe-indigo absolute -left-40 -top-40 h-[500px] w-[500px] rounded-full bg-indigo-400/20 blur-[180px]" />
           <div className="animate-breathe-emerald absolute -bottom-52 -right-40 h-[600px] w-[600px] rounded-full bg-emerald-400/15 blur-[180px]" />
         </div>
-        <ToastProvider>
-          <Header />
-          <main className="relative flex-1">{children}</main>
-          <Footer />
-        </ToastProvider>
+        <MotionProvider>
+          <ToastProvider>
+            <Header />
+            <main className="relative flex-1">{children}</main>
+            <Footer />
+          </ToastProvider>
+        </MotionProvider>
       </body>
     </html>
   );

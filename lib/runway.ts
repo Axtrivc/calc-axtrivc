@@ -57,19 +57,36 @@ export function computeRunway(input: RunwayInputs): RunwayResult {
     profitableAtMonth = 0;
   }
 
+  // Already out of cash while still burning — the runway is gone today, not
+  // "one more month" (month 0 already satisfies cash <= 0).
+  if (cash <= 0 && initialNetBurn > 0) {
+    return {
+      months: 0,
+      reachedProfitability,
+      breakevenMrr,
+      initialNetBurn,
+      points: [{ month: 0, cash: 0, mrr, netBurn: initialNetBurn }],
+      profitableAtMonth,
+      finalCash: 0,
+    };
+  }
+
   for (let m = 1; m <= MAX_MONTHS; m++) {
     const netBurn = grossBurn - curMrr; // cash consumed this month
     curCash = curCash - netBurn;
-    // grow MRR for next month
-    curMrr = curMrr * (1 + growth);
 
     if (netBurn <= 0 && !reachedProfitability) {
       reachedProfitability = true;
       profitableAtMonth = m;
     }
 
+    // Record the month with the MRR that applied DURING it, so the documented
+    // invariant netBurn = grossBurn - mrr holds for every point.
     const cashClamped = Math.max(0, curCash);
     points.push({ month: m, cash: cashClamped, mrr: curMrr, netBurn });
+
+    // grow MRR for next month
+    curMrr = curMrr * (1 + growth);
 
     if (curCash <= 0 && runwayMonths === null) {
       runwayMonths = m;

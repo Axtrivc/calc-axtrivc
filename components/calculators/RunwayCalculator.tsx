@@ -66,7 +66,7 @@ export default function RunwayCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="cash-slider"
-                label=""
+                label="" ariaLabel="Cash balance"
                 value={cash}
                 onChange={setCash}
                 min={0}
@@ -92,7 +92,7 @@ export default function RunwayCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="burn-slider"
-                label=""
+                label="" ariaLabel="Monthly gross burn"
                 value={burn}
                 onChange={setBurn}
                 min={0}
@@ -118,7 +118,7 @@ export default function RunwayCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="mrr-slider"
-                label=""
+                label="" ariaLabel="Current MRR"
                 value={mrr}
                 onChange={setMrr}
                 min={0}
@@ -146,7 +146,7 @@ export default function RunwayCalculator() {
             <div className="mt-3">
               <SliderControl
                 id="growth-slider"
-                label=""
+                label="" ariaLabel="Monthly MRR growth rate"
                 value={growth}
                 onChange={setGrowth}
                 min={0}

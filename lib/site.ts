@@ -42,7 +42,7 @@ export type Calculator = {
 export const calculators: Calculator[] = [
   {
     slug: 'stripe-fee-calculator',
-    href: '/stripe-fee-calculator',
+    href: '/stripe-fee-calculator/',
     title: 'Stripe Fee Calculator',
     shortTitle: 'Stripe Fees',
     tagline: 'Domestic, international & ACH fees — plus reverse pricing.',
@@ -59,7 +59,7 @@ export const calculators: Calculator[] = [
   },
   {
     slug: 'freelance-hourly-rate-calculator',
-    href: '/freelance-hourly-rate-calculator',
+    href: '/freelance-hourly-rate-calculator/',
     title: 'Freelance Hourly Rate Calculator',
     shortTitle: 'Hourly Rate',
     tagline: 'Set a rate that actually covers taxes, expenses & PTO.',
@@ -76,7 +76,7 @@ export const calculators: Calculator[] = [
   },
   {
     slug: 'saas-runway-calculator',
-    href: '/saas-runway-calculator',
+    href: '/saas-runway-calculator/',
     title: 'SaaS Runway Calculator',
     shortTitle: 'SaaS Runway',
     tagline: 'How many months of cash do you really have left?',
@@ -93,7 +93,7 @@ export const calculators: Calculator[] = [
   },
   {
     slug: 'llc-vs-ccorp-tax-calculator',
-    href: '/llc-vs-ccorp-tax-calculator',
+    href: '/llc-vs-ccorp-tax-calculator/',
     title: 'LLC vs C-Corp Tax Calculator',
     shortTitle: 'LLC vs C-Corp',
     tagline: 'Compare pass-through vs double taxation side by side.',

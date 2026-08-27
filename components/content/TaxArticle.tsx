@@ -34,8 +34,8 @@ export default function TaxArticle() {
       </p>
       <ol>
         <li>
-          <strong>Self-employment (SE) tax</strong> of {pct(TAX_CONSTANTS.seRate * 100, 1)} on net
-          business income, up to the Social Security wage base of
+          <strong>Self-employment (SE) tax</strong> of {pct(TAX_CONSTANTS.seRate * 100, 1)} — applied
+          to 92.35% of net business income per Schedule SE, up to the Social Security wage base of
           {' ' + numFmt(TAX_CONSTANTS.seCap, 0)} (and 2.9% Medicare on the amount above that). This
           covers both the employer and employee halves of Social Security + Medicare.
         </li>
@@ -85,18 +85,18 @@ export default function TaxArticle() {
         <tbody>
           <tr><td>Business profit</td><td>$200,000</td><td>$200,000</td></tr>
           <tr><td>Corporate tax (21%)</td><td>—</td><td>−$42,000</td></tr>
-          <tr><td>Self-employment tax</td><td>−$24,834</td><td>—</td></tr>
-          <tr><td>QBI deduction (20%)</td><td>−$35,033</td><td>—</td></tr>
+          <tr><td>Self-employment tax</td><td>−$27,193</td><td>—</td></tr>
+          <tr><td>QBI deduction (20%)</td><td>−$34,361</td><td>—</td></tr>
           <tr><td>Dividend tax (LTCG)</td><td>—</td><td>−$16,448</td></tr>
-          <tr><td>Ordinary income tax</td><td>−$27,892</td><td>—</td></tr>
-          <tr><td><strong>Total federal tax</strong></td><td><strong>~$52,726</strong></td><td><strong>~$58,448</strong></td></tr>
-          <tr><td><strong>After-tax income</strong></td><td><strong>~$147,274</strong></td><td><strong>~$141,552</strong></td></tr>
-          <tr><td>Effective rate</td><td>26.4%</td><td>29.2%</td></tr>
+          <tr><td>Ordinary income tax</td><td>−$25,833</td><td>—</td></tr>
+          <tr><td><strong>Total federal tax</strong></td><td><strong>~$53,026</strong></td><td><strong>~$58,448</strong></td></tr>
+          <tr><td><strong>After-tax income</strong></td><td><strong>~$146,974</strong></td><td><strong>~$141,552</strong></td></tr>
+          <tr><td>Effective rate</td><td>26.5%</td><td>29.2%</td></tr>
         </tbody>
       </table>
       <p>
-        At $200k, the LLC saves about <strong>$5,700/year</strong> in this simplified model. The gap
-        widens with profit: at $1M, the LLC advantage is over $40k/year.
+        At $200k, the LLC saves about <strong>$5,400/year</strong> in this simplified model. The gap
+        widens with profit: at $1M, the LLC advantage is over $43k/year.
       </p>
 
       <h2 id="strategies">When each structure actually wins</h2>
@@ -222,7 +222,7 @@ export default function TaxArticle() {
           {
             question: 'How much self-employment tax does an LLC owner pay?',
             answer:
-              'An LLC owner taxed as a sole proprietorship pays 15.3% self-employment tax (12.4% Social Security + 2.9% Medicare) on the first $176,100 of 2025 net business income, then 2.9% Medicare on anything above that. Half of the SE tax is deductible against income tax. Electing S-Corp status can reduce this by splitting income between a reasonable W-2 salary and untaxed distributions.',
+              'An LLC owner taxed as a sole proprietorship pays 15.3% self-employment tax (12.4% Social Security + 2.9% Medicare) on 92.35% of net business income — Schedule SE reduces the base because half of the tax is itself deductible — until that base reaches the 2025 wage base of $176,100, then 2.9% Medicare on anything above. Half of the SE tax is deductible against income tax. Electing S-Corp status can reduce this by splitting income between a reasonable W-2 salary and untaxed distributions.',
           },
           {
             question: 'Can an LLC be taxed as a C-Corp or S-Corp?',

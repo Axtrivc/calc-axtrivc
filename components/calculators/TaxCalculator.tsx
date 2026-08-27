@@ -50,7 +50,7 @@ export default function TaxCalculator() {
         <div className="mt-3">
           <SliderControl
             id="profit-slider"
-            label=""
+            label="" ariaLabel="Annual net business profit"
             value={profit}
             onChange={setProfit}
             min={10000}

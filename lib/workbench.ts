@@ -141,6 +141,9 @@ export function readUrlNumbers(): Record<string, number> {
   try {
     const sp = new URLSearchParams(window.location.search);
     sp.forEach((v, k) => {
+      // Skip empty values (?cash=) — Number('') is 0 and would silently
+      // override stored inputs with a zero.
+      if (v.trim() === '') return;
       const n = Number(v);
       if (Number.isFinite(n)) out[k] = n;
     });

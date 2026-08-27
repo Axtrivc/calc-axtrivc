@@ -48,6 +48,9 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Where focus was before the palette opened — restored on close so keyboard
+  // users are never dropped onto <body>.
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
 
   const items = useMemo<PaletteItem[]>(() => {
     const calcItems: PaletteItem[] = calculators.map((c) => ({
@@ -99,19 +102,30 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
     return items.filter((it) => it.keywords.includes(q) || it.title.toLowerCase().includes(q));
   }, [items, query]);
 
-  // Reset query + selection each time the palette opens, and focus the input.
+  // Reset query + selection each time the palette opens: focus the input, lock
+  // body scroll, and remember where to return focus when it closes.
   useEffect(() => {
-    if (open) {
-      setQuery('');
-      setActive(0);
-      window.setTimeout(() => inputRef.current?.focus(), 10);
-    }
+    if (!open) return;
+    restoreFocusRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setQuery('');
+    setActive(0);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const t = window.setTimeout(() => inputRef.current?.focus(), 10);
+    return () => {
+      window.clearTimeout(t);
+      document.body.style.overflow = prevOverflow;
+      restoreFocusRef.current?.focus?.();
+    };
   }, [open]);
 
   useEffect(() => {
     setActive(0);
   }, [query]);
 
+  // Key handling lives on the dialog container so it works no matter which
+  // child currently holds focus (events bubble up from the input).
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -125,6 +139,11 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
     } else if (e.key === 'Escape') {
       e.preventDefault();
       onClose();
+    } else if (e.key === 'Tab') {
+      // Focus trap: the input is the only tabbable control (options are
+      // navigated with arrows + aria-activedescendant), so keep Tab inside.
+      e.preventDefault();
+      inputRef.current?.focus();
     }
   }
 
@@ -140,6 +159,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) onClose();
           }}
+          onKeyDown={onKeyDown}
           role="dialog"
           aria-modal="true"
           aria-label="Command palette"
@@ -158,18 +178,22 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={onKeyDown}
                 placeholder="Jump to a calculator or run a command…"
                 aria-label="Command palette search"
+                role="combobox"
+                aria-expanded="true"
+                aria-controls="command-palette-results"
+                aria-activedescendant={filtered[active] ? `command-option-${filtered[active].id}` : undefined}
+                autoComplete="off"
                 className="w-full bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
               />
-              <kbd className="hidden shrink-0 rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-400 sm:block">
+              <kbd className="hidden shrink-0 rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-500 sm:block">
                 ESC
               </kbd>
             </div>
 
             {/* Results */}
-            <div className="max-h-[46vh] overflow-y-auto p-2">
+            <div id="command-palette-results" role="listbox" aria-label="Commands" className="max-h-[46vh] overflow-y-auto p-2">
               {filtered.length === 0 ? (
                 <p className="px-3 py-8 text-center text-sm text-slate-500">
                   Nothing matches &ldquo;{query}&rdquo;.
@@ -181,7 +205,11 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                   return (
                     <button
                       key={it.id}
+                      id={`command-option-${it.id}`}
                       type="button"
+                      role="option"
+                      aria-selected={isActive}
+                      tabIndex={-1}
                       onClick={() => it.run()}
                       onMouseEnter={() => setActive(i)}
                       className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
@@ -210,7 +238,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
               )}
             </div>
 
-            <div className="flex items-center gap-3 border-t border-slate-100 bg-slate-50/60 px-4 py-2 text-[11px] text-slate-400">
+            <div className="flex items-center gap-3 border-t border-slate-100 bg-slate-50/60 px-4 py-2 text-[11px] text-slate-500">
               <span className="flex items-center gap-1">
                 <kbd className="rounded border border-slate-200 bg-white px-1 font-mono">↑↓</kbd> navigate
               </span>

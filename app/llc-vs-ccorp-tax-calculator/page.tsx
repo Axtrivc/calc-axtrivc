@@ -67,8 +67,8 @@ export default function LlcVsCcorpPage() {
               formulas={[
                 {
                   label: 'LLC — pass-through stack',
-                  expression: 'SE 15.3% (≤ $176,100), 2.9% above · income brackets − QBI 20%',
-                  note: 'Half of SE tax is deductible against income; the 20% qualified business income deduction applies to what remains; the standard deduction ($14,600, single) reduces taxable income.',
+                  expression: 'SE 15.3% × 92.35% of profit (SS base ≤ $176,100), 2.9% above · income brackets − QBI 20%',
+                  note: 'Per Schedule SE the tax applies to 92.35% of net earnings; half of SE tax is deductible against income; the 20% qualified business income deduction applies to what remains (capped at 20% of taxable income); the standard deduction ($14,600, single) reduces taxable income.',
                 },
                 {
                   label: 'C-Corp — double taxation',
@@ -109,7 +109,7 @@ export default function LlcVsCcorpPage() {
             title="Total federal tax — LLC vs C-Corp by annual profit"
             description="Total tax burden first line (LLC / C-Corp), effective rate second. The winning structure per rung is flagged with its absolute saving."
             columns={['Annual profit', 'LLC — pass-through', 'C-Corp — double tax', 'Cheaper structure']}
-            footnote="Pass-through wins every rung shown, and keeps winning through the range real businesses inhabit: progressive brackets drag the LLC's effective rate from 20.2% to 28.4% across the ladder, but the C-Corp path is structurally heavier — its 21% corporate charge plus the 15–20% dividend toll on the remaining 79% climbs from 21% toward a ~36.8% asymptote it cannot escape while profits are distributed. The genuine C-Corp arguments are structural rather than distributional: retaining earnings inside the entity at 21%, blended W-2 salary strategies, and equity mechanics — all covered in the guide below."
+            footnote="Pass-through wins every rung shown, and keeps winning through the range real businesses inhabit: progressive brackets drag the LLC's effective rate from 19.8% to 28.3% across the ladder, but the C-Corp path is structurally heavier — its 21% corporate charge plus the 15–20% dividend toll on the remaining 79% climbs from 21% toward a ~36.8% asymptote it cannot escape while profits are distributed. The genuine C-Corp arguments are structural rather than distributional: retaining earnings inside the entity at 21%, blended W-2 salary strategies, and equity mechanics — all covered in the guide below."
           >
             <tbody className="divide-y divide-slate-100">
               {PROFIT_LADDER.map((profit) => {

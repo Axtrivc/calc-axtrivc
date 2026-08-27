@@ -1,10 +1,9 @@
 import Link from 'next/link';
 import { Calculator } from 'lucide-react';
 import { calculators, siteConfig } from '@/lib/site';
+import FooterYear from '@/components/FooterYear';
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-
   return (
     <footer className="mt-20 border-t border-slate-200/80 bg-white">
       <div className="container-page py-12">
@@ -66,7 +65,7 @@ export default function Footer() {
             professional before making business or tax decisions.
           </p>
           <p className="mt-4 text-sm text-slate-500">
-            &copy; {year} {siteConfig.name}. All rights reserved.
+            &copy; <FooterYear /> {siteConfig.name}. All rights reserved.
           </p>
         </div>
       </div>

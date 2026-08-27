@@ -67,7 +67,11 @@ export default function NumberInput({
     const cleaned = next.replace(/[, $%]/g, '');
     const parsed = parseFloat(cleaned);
     if (Number.isFinite(parsed)) {
-      onChange(parsed);
+      // Keep the emitted value inside [min, max] so the text field, the paired
+      // slider, and the results always agree (libs would silently clamp anyway).
+      const lo = min ?? -Infinity;
+      const hi = max ?? Infinity;
+      onChange(Math.min(hi, Math.max(lo, parsed)));
     } else if (next === '' || next === '-' || next === '.') {
       onChange(0);
     }
@@ -89,9 +93,6 @@ export default function NumberInput({
           type="text"
           inputMode="decimal"
           autoComplete="off"
-          min={min}
-          max={max}
-          step={step}
           value={raw}
           onChange={handle}
           onFocus={() => {
@@ -184,6 +185,7 @@ export function AnimatedNumber({
 export function SliderControl({
   id,
   label,
+  ariaLabel,
   value,
   onChange,
   min,
@@ -198,6 +200,8 @@ export function SliderControl({
 }: {
   id: string;
   label: string;
+  /** Accessible name for the slider when there is no visible label (label=""). */
+  ariaLabel?: string;
   value: number;
   onChange: (n: number) => void;
   min: number;
@@ -235,17 +239,23 @@ export function SliderControl({
 
   return (
     <div>
-      {label && (
+      {label ? (
         <div className="mb-2 flex items-baseline justify-between">
           <label htmlFor={id} className="label mb-0">
             {label}
           </label>
           <span className="readout text-sm font-semibold text-indigo-600">{fmt(value)}</span>
         </div>
+      ) : (
+        ariaLabel && (
+          <label htmlFor={id} className="sr-only">
+            {ariaLabel}
+          </label>
+        )
       )}
 
       {logarithmic ? (
-        <LogSlider id={id} value={value} onChange={onChange} min={logFloor} max={max} />
+        <LogSlider id={id} ariaLabel={ariaLabel} value={value} onChange={onChange} min={logFloor} max={max} />
       ) : (
         // NATIVE range — min/max/step drive the handle directly. No position remap
         // means zero thumb-fighting during continuous drags.
@@ -259,11 +269,11 @@ export function SliderControl({
           onChange={(e) => onChange(Number(e.target.value))}
           className="ws-slider"
           style={{ ['--fill' as string]: `${pct}%` }}
-          aria-label={label || undefined}
+          aria-label={label || ariaLabel || undefined}
         />
       )}
 
-      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-400">
+      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-500">
         <span>{fmt(min)}</span>
         <span>{fmt(max)}</span>
       </div>
@@ -303,12 +313,14 @@ export function SliderControl({
  */
 function LogSlider({
   id,
+  ariaLabel,
   value,
   onChange,
   min,
   max,
 }: {
   id: string;
+  ariaLabel?: string;
   value: number;
   onChange: (n: number) => void;
   min: number;
@@ -341,6 +353,7 @@ function LogSlider({
       }}
       className="ws-slider"
       style={{ ['--fill' as string]: `${(pos / POS_MAX) * 100}%` }}
+      aria-label={ariaLabel || undefined}
     />
   );
 }
