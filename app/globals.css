@@ -116,6 +116,34 @@ body {
   .readout {
     @apply font-mono tabular-nums;
   }
+
+  /* Fine blueprint grid used behind tool-page hero bands. Restrained enough to
+     read as "technical document", distinct from the homepage's ambient blobs.
+     Fading is applied via a mask-image on the element itself. */
+  .pro-grid {
+    background-image:
+      linear-gradient(to right, rgba(79, 70, 229, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(79, 70, 229, 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Dense reference table for scenario-analysis panels — terminal-style
+     numerics with hairline dividers and quiet zebra striping. */
+  .data-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .data-table thead {
+    @apply bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500;
+  }
+  .data-table th {
+    @apply whitespace-nowrap px-5 py-3 sm:px-6;
+  }
+  .data-table td {
+    @apply border-t border-slate-100 px-5 py-3 text-slate-600 sm:px-6;
+  }
+  .data-table tbody tr:hover {
+    @apply bg-slate-50/60;
+  }
 }
 
 /* ===========================

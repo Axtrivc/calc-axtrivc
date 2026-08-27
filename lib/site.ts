@@ -20,6 +20,23 @@ export type Calculator = {
   category: 'Payments' | 'Freelancing' | 'Startups' | 'Taxes';
   tags: string[];
   accent: 'emerald' | 'indigo' | 'slate' | 'amber';
+  /**
+   * Professional positioning layer.
+   *
+   * CalcSuite is deliberately NOT a general toolhub: every instrument sits at
+   * one stage of a single business-finance workflow —
+   *   Price your work -> Bill and protect margin -> Structure the entity -> Sustain the business.
+   * The fields below surface that positioning on each tool page:
+   *
+   *  - stage/stageLabel — where this tool sits in the workflow.
+   *  - dataBasis        — what the output numbers are built on (provenance).
+   *  - formulaSnapshot  — the core equation, rendered in the page header so
+   *                       visitors see the method before they use the tool.
+   */
+  stage: 1 | 2 | 3 | 4;
+  stageLabel: 'Price' | 'Bill' | 'Structure' | 'Sustain';
+  dataBasis: string;
+  formulaSnapshot: string;
 };
 
 export const calculators: Calculator[] = [
@@ -35,6 +52,10 @@ export const calculators: Calculator[] = [
     category: 'Payments',
     tags: ['stripe', 'payment processing', 'merchant fees', 'credit card', 'ach', 'reverse calculator'],
     accent: 'indigo',
+    stage: 2,
+    stageLabel: 'Bill',
+    dataBasis: "Stripe's standard US card & ACH published pricing",
+    formulaSnapshot: 'fee = charge × rate + fixed',
   },
   {
     slug: 'freelance-hourly-rate-calculator',
@@ -48,11 +69,16 @@ export const calculators: Calculator[] = [
     category: 'Freelancing',
     tags: ['freelance', 'hourly rate', 'day rate', 'pricing', 'consulting', 'self-employed'],
     accent: 'emerald',
+    stage: 1,
+    stageLabel: 'Price',
+    dataBasis: 'Transparent on-page model — every formula is documented below',
+    formulaSnapshot: 'rate = gross needed ÷ billable hours',
   },
   {
     slug: 'saas-runway-calculator',
     href: '/saas-runway-calculator',
     title: 'SaaS Runway Calculator',
+    shortTitle: 'SaaS Runway',
     tagline: 'How many months of cash do you really have left?',
     description:
       'Estimate your startup runway in months based on cash balance, gross burn, MRR, and monthly growth rate, with a month-by-month visual breakdown.',
@@ -60,6 +86,10 @@ export const calculators: Calculator[] = [
     category: 'Startups',
     tags: ['saas', 'runway', 'burn rate', 'cash flow', 'startup', 'mrr'],
     accent: 'slate',
+    stage: 4,
+    stageLabel: 'Sustain',
+    dataBasis: 'Deterministic month-by-month cash simulation (120-month cap)',
+    formulaSnapshot: 'runway = months until cash ≤ $0',
   },
   {
     slug: 'llc-vs-ccorp-tax-calculator',
@@ -73,6 +103,10 @@ export const calculators: Calculator[] = [
     category: 'Taxes',
     tags: ['llc', 'c-corp', 'corporation', 'tax', 'entity', 'pass-through', 'double taxation'],
     accent: 'amber',
+    stage: 3,
+    stageLabel: 'Structure',
+    dataBasis: 'Tax-year 2025 US federal parameters (IRS brackets, SE cap, QBI)',
+    formulaSnapshot: 'after-tax: pass-through vs double taxation',
   },
 ];
 
