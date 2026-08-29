@@ -25,6 +25,18 @@ body {
   background-attachment: fixed;
 }
 
+/* Dark "deep-space workbench" canvas: near-black blue base with the same two
+   color pools dialed down to lantern level, so the ambient identity survives
+   the theme switch instead of collapsing into flat #000. */
+html.dark body {
+  @apply text-slate-300;
+  background-color: #0b1220;
+  background-image:
+    radial-gradient(60% 50% at 12% 0%, rgba(99, 102, 241, 0.10), transparent 70%),
+    radial-gradient(55% 45% at 95% 100%, rgba(16, 185, 129, 0.06), transparent 72%),
+    radial-gradient(ellipse at top, rgba(15, 23, 42, 0.55), transparent 60%);
+}
+
 /* Spotlight position is written by a tiny pointer listener on the page wrapper.
    Defaults to off-center so SSR markup looks correct before JS runs. */
 :root {
@@ -42,7 +54,11 @@ body {
     @apply block w-full rounded-lg border border-slate-200 bg-white px-3.5 py-2.5 text-slate-900 shadow-sm transition
       placeholder:text-slate-400
       focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20
-      disabled:cursor-not-allowed disabled:bg-slate-100;
+      disabled:cursor-not-allowed disabled:bg-slate-100
+      dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-100 dark:shadow-none
+      dark:placeholder:text-slate-500
+      dark:focus:border-indigo-400 dark:focus:ring-indigo-400/25
+      dark:disabled:bg-white/[0.02];
   }
 
   .input-prefix {
@@ -51,20 +67,23 @@ body {
 
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200
-      focus:outline-none focus:ring-2 focus:ring-offset-2;
+      focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-slate-950;
   }
 
   .btn-primary {
-    @apply btn bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 hover:shadow-md focus:ring-indigo-500;
+    @apply btn bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 hover:shadow-md focus:ring-indigo-500
+      dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:focus:ring-indigo-400;
   }
 
   .btn-ghost {
-    @apply btn bg-white text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 hover:shadow-sm focus:ring-indigo-500;
+    @apply btn bg-white text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-50 hover:shadow-sm focus:ring-indigo-500
+      dark:bg-white/[0.04] dark:text-slate-300 dark:ring-white/10 dark:hover:bg-white/[0.08] dark:hover:shadow-none dark:focus:ring-indigo-400;
   }
 
   .card {
     @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all duration-200
-      hover:shadow-md hover:-translate-y-0.5;
+      hover:shadow-md hover:-translate-y-0.5
+      dark:border-white/[0.08] dark:bg-slate-900/60 dark:shadow-none dark:hover:border-white/[0.14] dark:hover:shadow-black/40;
   }
 
   /* Ultra-layered glass surface: frosted body, bright top edge, soft contact shadow.
@@ -75,6 +94,12 @@ body {
     box-shadow:
       0 1px 0 0 rgba(255, 255, 255, 0.9) inset, /* bright top hairline */
       0 8px 30px rgb(15 23 42 / 0.04); /* soft contact shadow */
+  }
+  html.dark .glass-card {
+    @apply border-white/[0.09] bg-white/[0.045];
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.06) inset, /* faint top hairline */
+      0 8px 30px rgb(0 0 0 / 0.25); /* deep contact shadow */
   }
 
   /* Page-wide cursor spotlight. The wrapper carries this class; --mouse-x/--mouse-y
@@ -95,10 +120,18 @@ body {
     );
     z-index: 0;
   }
+  html.dark .cursor-spotlight::before {
+    background: radial-gradient(
+      600px circle at var(--mouse-x) var(--mouse-y),
+      rgba(129, 140, 248, 0.07),
+      transparent 80%
+    );
+  }
 
   /* Inner static panel — nested, no hover lift */
   .panel {
-    @apply rounded-xl border border-slate-200 bg-slate-50/60;
+    @apply rounded-xl border border-slate-200 bg-slate-50/60
+      dark:border-white/[0.08] dark:bg-white/[0.03];
   }
 
   .chip {
@@ -106,11 +139,11 @@ body {
   }
 
   .label {
-    @apply mb-1.5 block text-sm font-medium text-slate-700;
+    @apply mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300;
   }
 
   .section-title {
-    @apply text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl;
+    @apply text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white;
   }
 
   /* Mono-numeric readout — for stats and counters */
@@ -127,6 +160,11 @@ body {
       linear-gradient(to bottom, rgba(79, 70, 229, 0.05) 1px, transparent 1px);
     background-size: 28px 28px;
   }
+  html.dark .pro-grid {
+    background-image:
+      linear-gradient(to right, rgba(129, 140, 248, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(129, 140, 248, 0.06) 1px, transparent 1px);
+  }
 
   /* Dense reference table for scenario-analysis panels — terminal-style
      numerics with hairline dividers and quiet zebra striping. */
@@ -134,16 +172,18 @@ body {
     @apply w-full border-collapse text-sm;
   }
   .data-table thead {
-    @apply bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500;
+    @apply bg-slate-50 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500
+      dark:bg-white/[0.04] dark:text-slate-400;
   }
   .data-table th {
     @apply whitespace-nowrap px-5 py-3 sm:px-6;
   }
   .data-table td {
-    @apply border-t border-slate-100 px-5 py-3 text-slate-600 sm:px-6;
+    @apply border-t border-slate-100 px-5 py-3 text-slate-600 sm:px-6
+      dark:border-white/[0.06] dark:text-slate-300;
   }
   .data-table tbody tr:hover {
-    @apply bg-slate-50/60;
+    @apply bg-slate-50/60 dark:bg-white/[0.03];
   }
 }
 
@@ -172,6 +212,15 @@ input[type='range'].ws-slider {
   transition: background 0.05s linear;
   touch-action: pan-y;
 }
+html.dark input[type='range'].ws-slider {
+  background: linear-gradient(
+    to right,
+    #818cf8 0%,
+    #6366f1 var(--fill, 50%),
+    #1e293b var(--fill, 50%),
+    #1e293b 100%
+  );
+}
 input[type='range'].ws-slider:active {
   cursor: grabbing;
 }
@@ -187,8 +236,17 @@ input[type='range'].ws-slider::-webkit-slider-thumb {
   cursor: grab;
   transition: transform 0.12s ease, box-shadow 0.16s ease;
 }
+html.dark input[type='range'].ws-slider::-webkit-slider-thumb {
+  background: #0b1220;
+  border-color: #818cf8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(129, 140, 248, 0.2);
+}
 input[type='range'].ws-slider:hover::-webkit-slider-thumb {
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25), 0 0 0 5px rgba(79, 70, 229, 0.12);
+  transform: scale(1.06);
+}
+html.dark input[type='range'].ws-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 0 5px rgba(129, 140, 248, 0.15);
   transform: scale(1.06);
 }
 input[type='range'].ws-slider:active::-webkit-slider-thumb {
@@ -196,12 +254,18 @@ input[type='range'].ws-slider:active::-webkit-slider-thumb {
   transform: scale(1.12);
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35), 0 0 0 6px rgba(79, 70, 229, 0.16);
 }
+html.dark input[type='range'].ws-slider:active::-webkit-slider-thumb {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 0 6px rgba(129, 140, 248, 0.2);
+}
 input[type='range'].ws-slider:focus::-webkit-slider-thumb {
   box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
 }
 input[type='range'].ws-slider:focus-visible {
   outline: 2px solid #4f46e5;
   outline-offset: 2px;
+}
+html.dark input[type='range'].ws-slider:focus-visible {
+  outline-color: #818cf8;
 }
 input[type='range'].ws-slider::-moz-range-thumb {
   width: 20px;
@@ -212,6 +276,10 @@ input[type='range'].ws-slider::-moz-range-thumb {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   cursor: grab;
   transition: transform 0.12s ease, box-shadow 0.16s ease;
+}
+html.dark input[type='range'].ws-slider::-moz-range-thumb {
+  background: #0b1220;
+  border-color: #818cf8;
 }
 input[type='range'].ws-slider:active::-moz-range-thumb {
   cursor: grabbing;
@@ -227,63 +295,69 @@ input[type='range'].ws-slider::-moz-range-progress {
   border-radius: 9999px;
   background: linear-gradient(to right, #4f46e5, #6366f1);
 }
+html.dark input[type='range'].ws-slider::-moz-range-progress {
+  background: linear-gradient(to right, #6366f1, #818cf8);
+}
 
 /* ===========================
-   SEO Article / prose (light)
+   SEO Article / prose (light + dark)
    =========================== */
 .prose-article {
   @apply mx-auto max-w-3xl;
 }
 .prose-article h2 {
-  @apply mt-12 mb-4 text-2xl font-bold tracking-tight text-slate-900;
+  @apply mt-12 mb-4 text-2xl font-bold tracking-tight text-slate-900 dark:text-white;
   scroll-margin-top: 6rem;
 }
 .prose-article h3 {
-  @apply mt-8 mb-3 text-xl font-semibold text-slate-900;
+  @apply mt-8 mb-3 text-xl font-semibold text-slate-900 dark:text-slate-100;
   scroll-margin-top: 6rem;
 }
 .prose-article p {
-  @apply mb-4 leading-relaxed text-slate-600;
+  @apply mb-4 leading-relaxed text-slate-600 dark:text-slate-300;
 }
 .prose-article ul {
-  @apply mb-4 list-disc space-y-2 pl-6 text-slate-600;
+  @apply mb-4 list-disc space-y-2 pl-6 text-slate-600 dark:text-slate-300;
 }
 .prose-article ol {
-  @apply mb-4 list-decimal space-y-2 pl-6 text-slate-600;
+  @apply mb-4 list-decimal space-y-2 pl-6 text-slate-600 dark:text-slate-300;
 }
 .prose-article li {
   @apply leading-relaxed;
 }
 .prose-article a {
-  @apply font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:text-indigo-700;
+  @apply font-medium text-indigo-600 underline decoration-indigo-300 underline-offset-2 transition hover:text-indigo-700
+    dark:text-indigo-400 dark:decoration-indigo-500/40 dark:hover:text-indigo-300;
 }
 .prose-article code {
-  @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm text-indigo-700;
+  @apply rounded bg-slate-100 px-1.5 py-0.5 font-mono text-sm text-indigo-700
+    dark:bg-white/[0.07] dark:text-indigo-300;
 }
 .prose-article table {
   @apply my-6 w-full border-collapse overflow-hidden rounded-lg text-sm;
 }
 .prose-article thead {
-  @apply bg-slate-100 text-left text-slate-700;
+  @apply bg-slate-100 text-left text-slate-700 dark:bg-white/[0.05] dark:text-slate-200;
 }
 .prose-article th {
   @apply px-4 py-3 font-semibold;
 }
 .prose-article td {
-  @apply border-t border-slate-200 px-4 py-3 text-slate-600;
+  @apply border-t border-slate-200 px-4 py-3 text-slate-600 dark:border-white/[0.07] dark:text-slate-300;
 }
 .prose-article tbody tr:nth-child(even) {
-  @apply bg-slate-50/60;
+  @apply bg-slate-50/60 dark:bg-white/[0.02];
 }
 .prose-article blockquote {
-  @apply my-6 border-l-4 border-indigo-200 bg-indigo-50/60 py-3 pl-4 pr-4 text-slate-600;
+  @apply my-6 border-l-4 border-indigo-200 bg-indigo-50/60 py-3 pl-4 pr-4 text-slate-600
+    dark:border-indigo-500/30 dark:bg-indigo-500/[0.06] dark:text-slate-300;
 }
 .prose-article strong {
-  @apply font-semibold text-slate-900;
+  @apply font-semibold text-slate-900 dark:text-slate-100;
 }
 
 /* ===========================
-   Scrollbar (subtle)
+   Scrollbar (subtle, theme-aware)
    =========================== */
 ::-webkit-scrollbar {
   width: 10px;
@@ -300,11 +374,61 @@ input[type='range'].ws-slider::-moz-range-progress {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+html.dark ::-webkit-scrollbar-track {
+  background: #0b1220;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #2b3a55;
+  border-color: #0b1220;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3d4f70;
+}
 
 /* Selection */
 ::selection {
   background: rgba(79, 70, 229, 0.18);
   color: #1e1b4b;
+}
+html.dark ::selection {
+  background: rgba(129, 140, 248, 0.3);
+  color: #eef2ff;
+}
+
+/* ===========================
+   Print — tool pages become clean reference documents
+   =========================== */
+@media print {
+  /* Reset to a light document regardless of the on-screen theme. */
+  html.dark body {
+    background: #ffffff;
+    color: #0f172a;
+  }
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+  /* Chrome, ambient layers, navigation and interactivity never survive to paper.
+     Elements opt out via the .no-print utility (Header, Footer, sticky bars). */
+  .no-print {
+    display: none !important;
+  }
+  .glass-card, .card {
+    box-shadow: none !important;
+    border-color: #d8dee9 !important;
+    background: #ffffff !important;
+  }
+  main {
+    padding-top: 0 !important;
+  }
+  a {
+    color: #0f172a !important;
+    text-decoration: none !important;
+  }
+  /* Avoid awkward page breaks inside cards and table rows. */
+  .card, .panel, tr, figure, dl {
+    break-inside: avoid;
+  }
 }
 
 /* ===========================

@@ -20,6 +20,8 @@ const KEY_PINS = `${WS_PREFIX}pins`;
 const KEY_RECENT = `${WS_PREFIX}recent`;
 const KEY_SCENARIOS = `${WS_PREFIX}scenarios`;
 export const inputKey = (slug: string) => `${WS_PREFIX}inputs:${slug}`;
+/** Theme choice ('light' | 'dark') — no stored value means "follow the OS". Re-exported from lib/site. */
+export { THEME_KEY } from '@/lib/site';
 
 /* ------------------------------------------------------------------ */
 /* Safe storage primitives                                            */

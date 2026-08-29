@@ -45,11 +45,11 @@ export default function ScenarioButtons({
   return (
     <>
       <button type="button" onClick={handleSave} className="btn-ghost" aria-label="Save this scenario to your workbench">
-        <BookmarkPlus className="h-4 w-4 text-indigo-500" aria-hidden="true" />
+        <BookmarkPlus className="h-4 w-4 text-indigo-500 dark:text-indigo-300" aria-hidden="true" />
         Save scenario
       </button>
       <button type="button" onClick={handleCopyLink} className="btn-ghost" aria-label="Copy a shareable link to these inputs">
-        <Link2 className="h-4 w-4 text-indigo-500" aria-hidden="true" />
+        <Link2 className="h-4 w-4 text-indigo-500 dark:text-indigo-300" aria-hidden="true" />
         Copy link
       </button>
     </>

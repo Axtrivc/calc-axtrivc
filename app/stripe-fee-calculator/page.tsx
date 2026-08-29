@@ -55,7 +55,7 @@ export default function StripeFeeCalculatorPage() {
         </section>
 
         {/* Methodology */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
           <SectionShell
             id="methodology"
             eyebrow="Methodology"
@@ -110,7 +110,7 @@ export default function StripeFeeCalculatorPage() {
             columns={['Charge amount', 'Domestic card', 'International card', 'ACH transfer', 'ACH edge vs card']}
             footnote="Pattern 1 — the fixed component dominates small tickets: the effective rate on a $10 domestic-card sale is 5.9%, nearly double the headline 2.9%. Pattern 2 — the ACH cap rewrites large invoices: above $625 every extra dollar rides free, which is why high-ticket B2B billing should default to bank transfers. Note that ACH settles slower and carries return-transfer risk not priced here — one reason cards still win below a few hundred dollars regardless of the raw arithmetic."
           >
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
               {SCENARIO_AMOUNTS.map((amount) => {
                 const rows = FEE_TYPES.map((t) => ({ t, ...computeFee(amount, t) }));
                 const domestic = rows.find((r) => r.t === 'domestic')!;
@@ -118,19 +118,19 @@ export default function StripeFeeCalculatorPage() {
                 const saving = domestic.fee - ach.fee;
                 return (
                   <tr key={amount}>
-                    <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900">
+                    <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900 dark:text-slate-100">
                       {usd(amount, 0)}
                     </th>
                     {rows.map((r) => (
                       <td key={r.t} className="text-right">
-                        <span className="readout block whitespace-nowrap font-medium text-rose-600">
+                        <span className="readout block whitespace-nowrap font-medium text-rose-600 dark:text-rose-400">
                           −{usd(r.fee)}
                         </span>
                         <span className="readout block text-xs text-slate-400">{pct(r.effectiveRate)}</span>
                       </td>
                     ))}
                     <td className="text-right">
-                      <span className="readout inline-block whitespace-nowrap rounded-full bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">
+                      <span className="readout inline-block whitespace-nowrap rounded-full bg-emerald-50 dark:bg-emerald-500/15 px-2 py-0.5 font-semibold text-emerald-700 dark:text-emerald-400">
                         +{usd(saving)}
                       </span>
                     </td>
@@ -142,7 +142,7 @@ export default function StripeFeeCalculatorPage() {
         </SectionShell>
 
         {/* Deep-dive guide */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
           <section id="guide" aria-label="Stripe fee guide" className="scroll-mt-28">
             <StripeArticle />
           </section>

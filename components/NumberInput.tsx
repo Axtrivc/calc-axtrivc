@@ -113,7 +113,7 @@ export default function NumberInput({
           </span>
         )}
       </div>
-      {helpText && <p className="mt-1.5 text-xs text-slate-500">{helpText}</p>}
+      {helpText && <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">{helpText}</p>}
     </div>
   );
 }
@@ -244,7 +244,7 @@ export function SliderControl({
           <label htmlFor={id} className="label mb-0">
             {label}
           </label>
-          <span className="readout text-sm font-semibold text-indigo-600">{fmt(value)}</span>
+          <span className="readout text-sm font-semibold text-indigo-600 dark:text-indigo-300">{fmt(value)}</span>
         </div>
       ) : (
         ariaLabel && (
@@ -273,7 +273,7 @@ export function SliderControl({
         />
       )}
 
-      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-500">
+      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-500 dark:text-slate-500">
         <span>{fmt(min)}</span>
         <span>{fmt(max)}</span>
       </div>
@@ -290,8 +290,8 @@ export function SliderControl({
                 onClick={() => onChange(p)}
                 className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all duration-150 ${
                   active
-                    ? 'border border-indigo-500 bg-indigo-50 text-indigo-700'
-                    : 'border border-slate-200 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600'
+                    ? 'border border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-300'
+                    : 'border border-slate-200 bg-white text-slate-500 hover:border-indigo-300 hover:text-indigo-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-400 dark:hover:border-indigo-400/50 dark:hover:text-indigo-300'
                 }`}
                 aria-pressed={active}
               >
@@ -302,7 +302,7 @@ export function SliderControl({
         </div>
       )}
 
-      {helpText && <p className="mt-2 text-xs text-slate-500">{helpText}</p>}
+      {helpText && <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{helpText}</p>}
     </div>
   );
 }
@@ -421,23 +421,23 @@ export function StatCard({
   animate?: boolean;
 }) {
   return (
-    <div
+      <div
       className={`rounded-xl border p-4 transition ${
         emphasis
-          ? 'border-indigo-200 bg-indigo-50/60'
-          : 'border-slate-200 bg-slate-50/60'
+          ? 'border-indigo-200 bg-indigo-50/60 dark:border-indigo-500/25 dark:bg-indigo-500/[0.08]'
+          : 'border-slate-200 bg-slate-50/60 dark:border-white/[0.08] dark:bg-white/[0.03]'
       }`}
     >
       <div
         className={`text-xs font-medium uppercase tracking-wide ${
-          emphasis ? 'text-indigo-600' : 'text-slate-500'
+          emphasis ? 'text-indigo-600 dark:text-indigo-300' : 'text-slate-500 dark:text-slate-400'
         }`}
       >
         {label}
       </div>
       <div
         className={`mt-1 readout text-2xl font-bold ${
-          emphasis ? 'text-indigo-700' : 'text-slate-900'
+          emphasis ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-900 dark:text-slate-100'
         }`}
       >
         {value}

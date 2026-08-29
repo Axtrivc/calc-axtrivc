@@ -59,19 +59,19 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                className="pointer-events-auto flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white/90 px-4 py-3 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl"
+                className="pointer-events-auto flex items-center gap-2.5 rounded-xl border border-slate-200/80 bg-white/90 px-4 py-3 shadow-[0_8px_24px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-900/90 dark:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
                 role="status"
               >
                 {it.tone === 'success' ? (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100">
-                    <Check className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-500/15">
+                    <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
                   </span>
                 ) : (
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-100">
-                    <Info className="h-3.5 w-3.5 text-indigo-600" aria-hidden="true" />
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-500/15">
+                    <Info className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
                   </span>
                 )}
-                <span className="text-sm font-medium text-slate-700">{it.message}</span>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{it.message}</span>
               </motion.div>
             ))}
           </AnimatePresence>

@@ -36,7 +36,7 @@ export default function TaxCalculator() {
     <div className="grid gap-6 lg:grid-cols-5">
       {/* Input */}
       <div className="card lg:col-span-2 p-6 sm:p-8">
-        <h2 className="mb-6 text-base font-semibold text-slate-900">Business profit</h2>
+        <h2 className="mb-6 text-base font-semibold text-slate-900 dark:text-slate-100">Business profit</h2>
         <NumberInput
           id="profit"
           label="Annual net business profit"
@@ -62,8 +62,8 @@ export default function TaxCalculator() {
           />
         </div>
 
-        <div className="mt-6 rounded-lg bg-slate-50 p-4 text-xs leading-relaxed text-slate-600">
-          <p className="font-semibold text-slate-700">Assumptions (2025, US federal, single filer):</p>
+        <div className="mt-6 rounded-lg bg-slate-50 p-4 text-xs leading-relaxed text-slate-600 dark:bg-white/[0.03] dark:text-slate-300">
+          <p className="font-semibold text-slate-700 dark:text-slate-200">Assumptions (2025, US federal, single filer):</p>
           <ul className="mt-2 space-y-1">
             <li>• Standard deduction ${numFmt(TAX_CONSTANTS.stdDeduction, 0)}</li>
             <li>• SE tax {pct(TAX_CONSTANTS.seRate * 100, 1)} up to ${numFmt(TAX_CONSTANTS.seCap, 0)}</li>
@@ -76,7 +76,7 @@ export default function TaxCalculator() {
 
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={reset} className="btn-ghost">
-            <RotateCcw className="h-4 w-4 text-indigo-500" aria-hidden="true" />
+            <RotateCcw className="h-4 w-4 text-indigo-500 dark:text-indigo-300" aria-hidden="true" />
             Reset
           </button>
           <CopyButton text={copyText} label="Copy result" />
@@ -94,30 +94,30 @@ export default function TaxCalculator() {
         {/* Winner banner */}
         <div
           className={`card p-6 sm:p-8 ${
-            tie ? 'border-slate-200' : llcWins ? 'border-emerald-200 bg-emerald-50/40' : 'border-amber-200 bg-amber-50/40'
+            tie ? 'border-slate-200 dark:border-white/[0.08]' : llcWins ? 'border-emerald-200 bg-emerald-50 dark:bg-emerald-500/15/40' : 'border-amber-200 bg-amber-50/40'
           }`}
         >
           <div className="flex items-center gap-2">
             <Trophy
-              className={`h-5 w-5 ${tie ? 'text-slate-400' : llcWins ? 'text-emerald-600' : 'text-amber-600'}`}
+              className={`h-5 w-5 ${tie ? 'text-slate-400' : llcWins ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}
               aria-hidden="true"
             />
-            <span className="text-sm font-semibold text-slate-700">
+            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
               {tie ? 'Roughly equal' : `${llcWins ? 'LLC' : 'C-Corp'} saves you more`}
             </span>
           </div>
           {!tie && (
-            <p className="mt-2 text-lg text-slate-900">
+            <p className="mt-2 text-lg text-slate-900 dark:text-slate-100">
               On <strong>${numFmt(profit, 0)}</strong> of profit, choosing{' '}
               <strong>{llcWins ? 'an LLC' : 'a C-Corp'}</strong> saves about{' '}
-              <strong className={llcWins ? 'text-emerald-700' : 'text-amber-700'}>
+              <strong className={llcWins ? 'text-emerald-700 dark:text-emerald-400' : 'text-amber-700'}>
                 <AnimatedNumber value={r.delta} format={(n) => usd(n, 0)} />
               </strong>{' '}
               in federal tax ({pct(Math.abs(r.llc.effectiveRate - r.ccorp.effectiveRate), 1)} pts lower).
             </p>
           )}
           {tie && (
-            <p className="mt-2 text-slate-700">
+            <p className="mt-2 text-slate-700 dark:text-slate-200">
               At this profit level the two structures are roughly equivalent in pure federal tax.
             </p>
           )}
@@ -125,8 +125,8 @@ export default function TaxCalculator() {
 
         {/* Effective rate comparison bars */}
         <div className="card p-6 sm:p-8">
-          <h3 className="text-sm font-semibold text-slate-900">Effective federal tax rate</h3>
-          <p className="text-xs text-slate-500">Total tax ÷ profit. Lower is better.</p>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Effective federal tax rate</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Total tax ÷ profit. Lower is better.</p>
 
           <div className="mt-5 space-y-5">
             <RateBar
@@ -178,7 +178,7 @@ export default function TaxCalculator() {
           />
         </div>
 
-        <div className="flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50/60 p-4 text-xs leading-relaxed text-slate-600">
+        <div className="flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50/60 p-4 text-xs leading-relaxed text-slate-600 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-slate-300">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
           <p>
             This is a <strong>simplified federal illustration</strong>, not tax advice. Real C-Corp
@@ -211,16 +211,16 @@ function RateBar({
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between">
-        <span className={`text-sm font-semibold ${emphasize ? 'text-slate-900' : 'text-slate-600'}`}>
+        <span className={`text-sm font-semibold ${emphasize ? 'text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-300'}`}>
           {label}
-          {emphasize && <span className="chip ml-2 bg-emerald-100 text-emerald-700">lowest</span>}
+          {emphasize && <span className="chip ml-2 bg-emerald-100 text-emerald-700 dark:text-emerald-400">lowest</span>}
         </span>
-        <span className="readout text-lg font-bold text-slate-900">{pct(rate, 1)}</span>
+        <span className="readout text-lg font-bold text-slate-900 dark:text-slate-100">{pct(rate, 1)}</span>
       </div>
-      <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100">
+      <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-white/[0.06]">
         <div className={`h-full rounded-full ${color} transition-all duration-500`} style={{ width: `${width}%` }} />
       </div>
-      {sub && <p className="mt-1 text-xs text-slate-500">{sub}</p>}
+      {sub && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{sub}</p>}
     </div>
   );
 }
@@ -244,35 +244,35 @@ function BreakdownCard({
 }) {
   const toneClasses =
     tone === 'emerald'
-      ? { ring: 'border-emerald-200', accent: 'text-emerald-700', total: 'text-emerald-700' }
+      ? { ring: 'border-emerald-200', accent: 'text-emerald-700 dark:text-emerald-400', total: 'text-emerald-700 dark:text-emerald-400' }
       : { ring: 'border-amber-200', accent: 'text-amber-700', total: 'text-amber-700' };
   return (
     <div className={`card overflow-hidden ${toneClasses.ring}`}>
-      <div className="border-b border-slate-100 px-5 py-3">
+      <div className="border-b border-slate-100 dark:border-white/[0.06] px-5 py-3">
         <h3 className={`text-sm font-bold ${toneClasses.accent}`}>{title}</h3>
       </div>
       <dl className="space-y-2 px-5 py-4 text-sm">
         {rows.map((row) => (
           <div key={row.label} className="flex justify-between">
-            <dt className="text-slate-600">{row.label}</dt>
-            <dd className={`readout ${row.muted ? 'text-slate-400' : 'font-medium text-slate-900'}`}>{row.value}</dd>
+            <dt className="text-slate-600 dark:text-slate-300">{row.label}</dt>
+            <dd className={`readout ${row.muted ? 'text-slate-400' : 'font-medium text-slate-900 dark:text-slate-100'}`}>{row.value}</dd>
           </div>
         ))}
-        <div className="mt-2 flex justify-between border-t border-slate-200 pt-2.5">
-          <dt className="font-semibold text-slate-700">{totalLabel}</dt>
+        <div className="mt-2 flex justify-between border-t border-slate-200 dark:border-white/[0.08] pt-2.5">
+          <dt className="font-semibold text-slate-700 dark:text-slate-200">{totalLabel}</dt>
           <dd className={`readout font-bold ${toneClasses.total}`}>
             <AnimatedNumber value={total} format={(n) => usd(n, 0)} />
           </dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-slate-600">After-tax income</dt>
-          <dd className="readout font-semibold text-slate-900">
+          <dt className="text-slate-600 dark:text-slate-300">After-tax income</dt>
+          <dd className="readout font-semibold text-slate-900 dark:text-slate-100">
             <AnimatedNumber value={afterTax} format={(n) => usd(n, 0)} />
           </dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-slate-600">Effective rate</dt>
-          <dd className="readout font-semibold text-slate-900">
+          <dt className="text-slate-600 dark:text-slate-300">Effective rate</dt>
+          <dd className="readout font-semibold text-slate-900 dark:text-slate-100">
             <AnimatedNumber value={effectiveRate} format={(n) => pct(n, 1)} />
           </dd>
         </div>

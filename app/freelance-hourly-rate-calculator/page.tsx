@@ -61,7 +61,7 @@ export default function FreelanceHourlyRatePage() {
         </section>
 
         {/* Methodology */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
           <SectionShell
             id="methodology"
             eyebrow="Methodology"
@@ -116,10 +116,10 @@ export default function FreelanceHourlyRatePage() {
             columns={['Target take-home', ...WEEKLY_HOURS.map((h) => `${h} h / wk`)]}
             footnote="The elasticity is the lesson: halving capacity from 30 to 15 weekly hours roughly doubles the required rate. Underpricing stems from comparing against salaried dollars instead of dividing a real cost stack by scarce billable hours."
           >
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
               {TAKE_HOME_TARGETS.map((target) => (
                 <tr key={target}>
-                  <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900">
+                  <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900 dark:text-slate-100">
                     {usd(target, 0)}
                   </th>
                   {WEEKLY_HOURS.map((hrs) => {
@@ -130,7 +130,7 @@ export default function FreelanceHourlyRatePage() {
                     });
                     return (
                       <td key={hrs} className="text-right">
-                        <span className="readout block whitespace-nowrap font-semibold text-slate-800">
+                        <span className="readout block whitespace-nowrap font-semibold text-slate-800 dark:text-slate-200">
                           {usd(r.hourlyRate, 0)}
                         </span>
                         <span className="readout block text-xs text-slate-400">
@@ -146,7 +146,7 @@ export default function FreelanceHourlyRatePage() {
         </SectionShell>
 
         {/* Deep-dive guide */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
           <section id="guide" aria-label="Freelance pricing guide" className="scroll-mt-28">
             <FreelanceArticle />
           </section>

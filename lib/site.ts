@@ -4,10 +4,17 @@ export const siteConfig = {
   domain: 'calc.axtrivc.com',
   url: 'https://calc.axtrivc.com',
   description:
-    'Free financial & business calculators for freelancers, startups, and SMBs. Instantly estimate Stripe fees, hourly rates, runway, and tax savings.',
+    'Free financial & business calculators for freelancers, startups, and SMBs. Instantly estimate Stripe fees, hourly rates, runway, S-Corp savings, and tax comparisons.',
   ogImage: '/og-image.png',
   twitter: '@calc_axtrivc',
 };
+
+/**
+ * localStorage key holding the visitor's theme choice ('light' | 'dark').
+ * Lives here (not in workbench.ts) so the server-rendered pre-paint script
+ * in app/layout.tsx can inline it without pulling client hooks into the RSC graph.
+ */
+export const THEME_KEY = 'calcws:v1:theme';
 
 export type Calculator = {
   slug: string;
@@ -16,7 +23,7 @@ export type Calculator = {
   shortTitle?: string;
   tagline: string;
   description: string;
-  icon: 'CreditCard' | 'Clock' | 'TrendingUp' | 'Building2';
+  icon: 'CreditCard' | 'Clock' | 'TrendingUp' | 'Building2' | 'Landmark';
   category: 'Payments' | 'Freelancing' | 'Startups' | 'Taxes';
   tags: string[];
   accent: 'emerald' | 'indigo' | 'slate' | 'amber';
@@ -25,7 +32,8 @@ export type Calculator = {
    *
    * CalcSuite is deliberately NOT a general toolhub: every instrument sits at
    * one stage of a single business-finance workflow —
-   *   Price your work -> Bill and protect margin -> Structure the entity -> Sustain the business.
+   *   Price your work -> Bill and protect margin -> Structure the entity ->
+   *   Compensate yourself -> Sustain the business.
    * The fields below surface that positioning on each tool page:
    *
    *  - stage/stageLabel — where this tool sits in the workflow.
@@ -33,8 +41,8 @@ export type Calculator = {
    *  - formulaSnapshot  — the core equation, rendered in the page header so
    *                       visitors see the method before they use the tool.
    */
-  stage: 1 | 2 | 3 | 4;
-  stageLabel: 'Price' | 'Bill' | 'Structure' | 'Sustain';
+  stage: 1 | 2 | 3 | 4 | 5;
+  stageLabel: 'Price' | 'Bill' | 'Structure' | 'Compensate' | 'Sustain';
   dataBasis: string;
   formulaSnapshot: string;
 };
@@ -86,7 +94,7 @@ export const calculators: Calculator[] = [
     category: 'Startups',
     tags: ['saas', 'runway', 'burn rate', 'cash flow', 'startup', 'mrr'],
     accent: 'slate',
-    stage: 4,
+    stage: 5,
     stageLabel: 'Sustain',
     dataBasis: 'Deterministic month-by-month cash simulation (120-month cap)',
     formulaSnapshot: 'runway = months until cash ≤ $0',
@@ -107,6 +115,32 @@ export const calculators: Calculator[] = [
     stageLabel: 'Structure',
     dataBasis: 'Tax-year 2025 US federal parameters (IRS brackets, SE cap, QBI)',
     formulaSnapshot: 'after-tax: pass-through vs double taxation',
+  },
+  {
+    slug: 's-corp-tax-calculator',
+    href: '/s-corp-tax-calculator/',
+    title: 'S-Corp Salary Calculator',
+    shortTitle: 'S-Corp Salary',
+    tagline: 'Is the S election worth it? Salary + distributions vs SE tax.',
+    description:
+      'Compare LLC self-employment tax against S-Corp salary + distributions. Full 2025 federal model: FICA, QBI interaction, breakeven payroll overhead, and salary sensitivity.',
+    icon: 'Landmark',
+    category: 'Taxes',
+    tags: [
+      's corp',
+      's corp salary',
+      'self employment tax',
+      'reasonable salary',
+      'form 2553',
+      's corp vs llc',
+      'payroll tax',
+      'distributions',
+    ],
+    accent: 'emerald',
+    stage: 4,
+    stageLabel: 'Compensate',
+    dataBasis: 'Tax-year 2025 US federal parameters (FICA, SS wage base, QBI, 1120-S geometry)',
+    formulaSnapshot: 'advantage = payroll tax saved − tax drift − overhead',
   },
 ];
 

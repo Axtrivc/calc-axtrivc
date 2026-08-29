@@ -43,7 +43,7 @@ const MEDICARE_RATE = 0.029; // employee-side Medicare on amount above SS cap
 const SE_BASE_FACTOR = 0.9235; // Schedule SE: SE tax applies to 92.35% of net earnings
 const SE_MIN_BASE = 400; // no SE tax below $400 of net earnings
 
-function taxFromBrackets(taxableIncome: number, brackets: { rate: number; upTo: number }[]): number {
+export function taxFromBrackets(taxableIncome: number, brackets: { rate: number; upTo: number }[]): number {
   let tax = 0;
   let prevCap = 0;
   for (const b of brackets) {
@@ -54,6 +54,8 @@ function taxFromBrackets(taxableIncome: number, brackets: { rate: number; upTo: 
   }
   return tax;
 }
+
+export const FED_BRACKETS_2025 = FED_BRACKETS_2025_SINGLE;
 
 /**
  * LLC / sole proprietorship pass-through model.
@@ -66,7 +68,7 @@ function taxFromBrackets(taxableIncome: number, brackets: { rate: number; upTo: 
  *     the cap is just 20% of ordinary taxable income before the QBI deduction).
  *  4. Ordinary income tax applies to (net income − 1/2 SE tax − QBI deduction − std deduction).
  */
-function computeLlc(profit: number) {
+export function computeLlc(profit: number) {
   const netSE = profit; // net business income subject to SE tax
   const seBase = netSE * SE_BASE_FACTOR;
   const seTaxOnPortion =

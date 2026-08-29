@@ -9,6 +9,7 @@ import {
   TrendingUp,
   Building2,
   CreditCard,
+  Landmark,
   Search,
   Trash2,
   Home,
@@ -24,6 +25,7 @@ const iconMap: Record<string, LucideIcon> = {
   Clock,
   TrendingUp,
   Building2,
+  Landmark,
 };
 
 type PaletteItem = {
@@ -151,7 +153,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[90] flex items-start justify-center bg-slate-900/25 px-4 pt-[12vh] backdrop-blur-[2px]"
+          className="fixed inset-0 z-[90] flex items-start justify-center bg-slate-900/25 px-4 pt-[12vh] dark:bg-black/60 backdrop-blur-[2px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -165,14 +167,14 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
           aria-label="Command palette"
         >
           <motion.div
-            className="w-full max-w-xl overflow-hidden rounded-2xl border border-white/80 bg-white/95 shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-xl"
+            className="w-full max-w-xl overflow-hidden rounded-2xl border border-white/80 bg-white dark:bg-[#101a2e]/95 shadow-[0_24px_60px_rgba(15,23,42,0.22)] dark:shadow-[0_24px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl"
             initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 380, damping: 30 }}
           >
             {/* Search field */}
-            <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3.5">
+            <div className="flex items-center gap-3 border-b border-slate-100 dark:border-white/[0.06] px-4 py-3.5">
               <Search className="h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
               <input
                 ref={inputRef}
@@ -185,9 +187,9 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                 aria-controls="command-palette-results"
                 aria-activedescendant={filtered[active] ? `command-option-${filtered[active].id}` : undefined}
                 autoComplete="off"
-                className="w-full bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                className="w-full bg-transparent text-base text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none"
               />
-              <kbd className="hidden shrink-0 rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-500 sm:block">
+              <kbd className="hidden shrink-0 rounded-md border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-500 dark:text-slate-400 sm:block">
                 ESC
               </kbd>
             </div>
@@ -195,7 +197,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
             {/* Results */}
             <div id="command-palette-results" role="listbox" aria-label="Commands" className="max-h-[46vh] overflow-y-auto p-2">
               {filtered.length === 0 ? (
-                <p className="px-3 py-8 text-center text-sm text-slate-500">
+                <p className="px-3 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
                   Nothing matches &ldquo;{query}&rdquo;.
                 </p>
               ) : (
@@ -213,21 +215,21 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                       onClick={() => it.run()}
                       onMouseEnter={() => setActive(i)}
                       className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
-                        isActive ? 'bg-indigo-50' : 'hover:bg-slate-50'
+                        isActive ? 'bg-indigo-50 dark:bg-indigo-500/15' : 'hover:bg-slate-50 dark:hover:bg-white/[0.04]'
                       }`}
                     >
                       <span
                         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
                           it.kind === 'action'
-                            ? 'bg-slate-100 text-slate-500'
-                            : 'bg-indigo-100/70 text-indigo-600'
+                            ? 'bg-slate-100 dark:bg-white/[0.07] text-slate-500 dark:text-slate-400'
+                            : 'bg-indigo-100/70 text-indigo-600 dark:text-indigo-300'
                         }`}
                       >
                         <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold text-slate-800">{it.title}</span>
-                        <span className="block truncate text-xs text-slate-500">{it.subtitle}</span>
+                        <span className="block truncate text-sm font-semibold text-slate-800 dark:text-slate-200">{it.title}</span>
+                        <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{it.subtitle}</span>
                       </span>
                       {isActive && (
                         <CornerDownLeft className="h-4 w-4 shrink-0 text-indigo-400" aria-hidden="true" />
@@ -238,12 +240,12 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
               )}
             </div>
 
-            <div className="flex items-center gap-3 border-t border-slate-100 bg-slate-50/60 px-4 py-2 text-[11px] text-slate-500">
+            <div className="flex items-center gap-3 border-t border-slate-100 bg-slate-50/60 px-4 py-2 dark:border-white/[0.06] dark:bg-white/[0.03] text-[11px] text-slate-500 dark:text-slate-400">
               <span className="flex items-center gap-1">
-                <kbd className="rounded border border-slate-200 bg-white px-1 font-mono">↑↓</kbd> navigate
+                <kbd className="rounded border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.05] px-1 font-mono">↑↓</kbd> navigate
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded border border-slate-200 bg-white px-1 font-mono">↵</kbd> open
+                <kbd className="rounded border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.05] px-1 font-mono">↵</kbd> open
               </span>
               <span className="ml-auto">Everything stays on this device</span>
             </div>

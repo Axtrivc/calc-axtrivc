@@ -10,15 +10,31 @@ import {
   SectionShell,
   WorkflowChain,
 } from '@/components/professional';
+import ComparisonChart from '@/components/ComparisonChart';
 import { calculators, siteConfig } from '@/lib/site';
 import { compareEntities } from '@/lib/tax';
-import { pct, usd } from '@/lib/format';
+import { pct, usd, usdCompact } from '@/lib/format';
 
 const calc = calculators.find((c) => c.slug === 'llc-vs-ccorp-tax-calculator')!;
 
 /* Profit ladder spanning the realistic solo/small-business range — wide enough
    to expose the structural crossover between pass-through and double taxation. */
 const PROFIT_LADDER = [50_000, 100_000, 200_000, 400_000, 800_000];
+
+/* Chart series: after-tax income under both structures, $50k → $1M. */
+const CHART_PROFITS = Array.from({ length: 39 }, (_, i) => 50_000 + i * 25_000);
+const CHART_SERIES = [
+  {
+    label: 'LLC — after-tax income',
+    color: '#0ea5e9',
+    points: CHART_PROFITS.map((p) => ({ x: p, y: compareEntities(p).llc.afterTax })),
+  },
+  {
+    label: 'C-Corp — after-tax income (100% dividends)',
+    color: '#f59e0b',
+    points: CHART_PROFITS.map((p) => ({ x: p, y: compareEntities(p).ccorp.afterTax })),
+  },
+];
 
 export const metadata: Metadata = {
   title: 'LLC vs C-Corp Tax Calculator (2025) — Compare Federal Taxes',
@@ -55,7 +71,7 @@ export default function LlcVsCcorpPage() {
         </section>
 
         {/* Methodology */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 pt-12 dark:border-white/[0.07]">
           <SectionShell
             id="methodology"
             eyebrow="Methodology"
@@ -111,33 +127,33 @@ export default function LlcVsCcorpPage() {
             columns={['Annual profit', 'LLC — pass-through', 'C-Corp — double tax', 'Cheaper structure']}
             footnote="Pass-through wins every rung shown, and keeps winning through the range real businesses inhabit: progressive brackets drag the LLC's effective rate from 19.8% to 28.3% across the ladder, but the C-Corp path is structurally heavier — its 21% corporate charge plus the 15–20% dividend toll on the remaining 79% climbs from 21% toward a ~36.8% asymptote it cannot escape while profits are distributed. The genuine C-Corp arguments are structural rather than distributional: retaining earnings inside the entity at 21%, blended W-2 salary strategies, and equity mechanics — all covered in the guide below."
           >
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
               {PROFIT_LADDER.map((profit) => {
                 const r = compareEntities(profit);
                 return (
                   <tr key={profit}>
-                    <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900">
+                    <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900 dark:text-slate-100">
                       {usd(profit, 0)}
                     </th>
                     <td className="text-right">
-                      <span className="readout block whitespace-nowrap font-medium text-slate-800">{usd(r.llc.totalTax)}</span>
-                      <span className="readout block text-xs text-slate-400">{pct(r.llc.effectiveRate)}</span>
+                      <span className="readout block whitespace-nowrap font-medium text-slate-800 dark:text-slate-200">{usd(r.llc.totalTax)}</span>
+                      <span className="readout block text-xs text-slate-400 dark:text-slate-500">{pct(r.llc.effectiveRate)}</span>
                     </td>
                     <td className="text-right">
-                      <span className="readout block whitespace-nowrap font-medium text-slate-800">{usd(r.ccorp.totalTax)}</span>
-                      <span className="readout block text-xs text-slate-400">{pct(r.ccorp.effectiveRate)}</span>
+                      <span className="readout block whitespace-nowrap font-medium text-slate-800 dark:text-slate-200">{usd(r.ccorp.totalTax)}</span>
+                      <span className="readout block text-xs text-slate-400 dark:text-slate-500">{pct(r.ccorp.effectiveRate)}</span>
                     </td>
                     <td className="text-right">
                       {r.winner === 'tie' ? (
-                        <span className="chip bg-slate-100 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                        <span className="chip bg-slate-100 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:bg-white/[0.06] dark:text-slate-400">
                           Even
                         </span>
                       ) : (
                         <span
                           className={`chip text-[11px] font-semibold uppercase tracking-wider ${
                             r.winner === 'llc'
-                              ? 'bg-emerald-50 text-emerald-700'
-                              : 'bg-indigo-50 text-indigo-700'
+                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+                              : 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300'
                           }`}
                         >
                           {r.winner === 'llc' ? 'LLC' : 'C-Corp'} · saves {usd(r.delta, 0)}
@@ -149,10 +165,23 @@ export default function LlcVsCcorpPage() {
               })}
             </tbody>
           </ScenarioPanel>
+
+          <div className="mt-6">
+            <ComparisonChart
+              series={CHART_SERIES}
+              xLabel="Net business profit"
+              yLabel="After-tax income / yr"
+              xFormat={(n) => usdCompact(n)}
+              yFormat={(n) => usdCompact(n)}
+              height={300}
+              marker={{ x: 200000, label: '$200k example' }}
+              caption="Both curves come from the full model at build time. The gap between the lines is the price of double taxation when every dollar is distributed — it widens with profit, which is exactly why the C-Corp case rests on retaining earnings inside the entity rather than distributing them."
+            />
+          </div>
         </SectionShell>
 
         {/* Deep-dive guide */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 pt-12 dark:border-white/[0.07]">
           <section id="guide" aria-label="LLC vs C-Corp tax guide" className="scroll-mt-28">
             <TaxArticle />
           </section>

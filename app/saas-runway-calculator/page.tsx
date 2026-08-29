@@ -57,7 +57,7 @@ export default function SaasRunwayPage() {
         </section>
 
         {/* Methodology */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
           <SectionShell
             id="methodology"
             eyebrow="Methodology"
@@ -113,12 +113,12 @@ export default function SaasRunwayPage() {
             columns={['Cash balance', ...GROWTH_RATES.map((g) => `+${g}% MRR / mo`)]}
             footnote="Read the grid left to right. With MRR at $30k against $80k of burn, mild growth only stretches the clock by one to four months — the payoff is a cliff, not a slope: past the growth rate where MRR overtakes gross burn before the cash depletes (by +5% monthly at $1M, but not until +10% at $500k), the 'Breakeven' cells mean runway stops being a countdown entirely. The left-hand column is exactly the naive cash ÷ burn division most teams quote in board decks."
           >
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
               {CASH_BALANCES.map((cash) => {
                 const baseMonths = computeRunway({ cash, ...PROFILE, growthRate: 0 }).months;
                 return (
                   <tr key={cash}>
-                    <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900">
+                    <th scope="row" className="readout font-semibold normal-case tracking-normal text-slate-900 dark:text-slate-100">
                       ${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(cash)}
                     </th>
                     {GROWTH_RATES.map((g) => {
@@ -129,15 +129,15 @@ export default function SaasRunwayPage() {
                         <td key={g} className="text-right">
                           {r.months !== null ? (
                             <>
-                              <span className="readout block whitespace-nowrap font-semibold text-slate-800">
+                              <span className="readout block whitespace-nowrap font-semibold text-slate-800 dark:text-slate-200">
                                 {Math.floor(r.months)} mo
                               </span>
                               {delta !== null && delta > 0 && (
-                                <span className="readout block text-xs text-emerald-600">+{delta} mo</span>
+                                <span className="readout block text-xs text-emerald-600 dark:text-emerald-400">+{delta} mo</span>
                               )}
                             </>
                           ) : (
-                            <span className="chip bg-emerald-50 text-[11px] font-semibold uppercase tracking-wider text-emerald-700">
+                            <span className="chip bg-emerald-50 dark:bg-emerald-500/15 text-[11px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                               Breakeven
                             </span>
                           )}
@@ -152,7 +152,7 @@ export default function SaasRunwayPage() {
         </SectionShell>
 
         {/* Deep-dive guide */}
-        <div className="border-t border-slate-200 pt-12">
+        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
           <section id="guide" aria-label="SaaS runway guide" className="scroll-mt-28">
             <RunwayArticle />
           </section>

@@ -36,10 +36,10 @@ export default function RunwayCalculator() {
 
   const runwayTone =
     runwayColor === 'emerald'
-      ? 'text-emerald-600'
+      ? 'text-emerald-600 dark:text-emerald-400'
       : runwayColor === 'amber'
-        ? 'text-amber-600'
-        : 'text-rose-600';
+        ? 'text-amber-600 dark:text-amber-400'
+        : 'text-rose-600 dark:text-rose-400';
 
   const copyText =
     r.months === null
@@ -50,7 +50,7 @@ export default function RunwayCalculator() {
     <div className="grid gap-6 lg:grid-cols-5">
       {/* Inputs */}
       <div className="card lg:col-span-2 p-6 sm:p-8">
-        <h2 className="mb-6 text-base font-semibold text-slate-900">Your runway inputs</h2>
+        <h2 className="mb-6 text-base font-semibold text-slate-900 dark:text-slate-100">Your runway inputs</h2>
         <div className="space-y-6">
           <div>
             <NumberInput
@@ -159,7 +159,7 @@ export default function RunwayCalculator() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-600">
+        <div className="mt-6 flex items-start gap-2 rounded-lg bg-slate-50 p-3 text-xs text-slate-600 dark:bg-white/[0.03] dark:text-slate-300">
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
           <p>
             Net burn = gross burn − MRR. As MRR grows each month, your net burn shrinks — so real
@@ -169,7 +169,7 @@ export default function RunwayCalculator() {
 
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" onClick={reset} className="btn-ghost">
-            <RotateCcw className="h-4 w-4 text-indigo-500" aria-hidden="true" />
+            <RotateCcw className="h-4 w-4 text-indigo-500 dark:text-indigo-300" aria-hidden="true" />
             Reset
           </button>
           <CopyButton text={copyText} label="Copy result" />
@@ -185,7 +185,7 @@ export default function RunwayCalculator() {
       {/* Results + chart */}
       <div className="lg:col-span-3 space-y-4">
         <div className="card p-6 sm:p-8">
-          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             Runway remaining
           </span>
           <div className={`mt-1 readout text-6xl font-extrabold tracking-tight ${runwayTone}`}>
@@ -194,7 +194,7 @@ export default function RunwayCalculator() {
               <span className="ml-2 text-xl font-semibold text-slate-400">months</span>
             )}
           </div>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
             {r.months === null
               ? r.initialNetBurn <= 0
                 ? 'You are already cash-flow positive — MRR covers your burn. Each month adds to your bank balance.'
@@ -204,7 +204,7 @@ export default function RunwayCalculator() {
 
           {r.months !== null && (
             <div className="mt-5">
-              <div className="relative h-3 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="relative h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-white/[0.06]">
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${
                     runwayColor === 'emerald'
@@ -263,8 +263,8 @@ function CashChart({
   return (
     <div className="card p-6 sm:p-8">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-slate-900">Cash trajectory</h3>
-        <span className="flex items-center gap-1 text-xs text-slate-500">
+        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Cash trajectory</h3>
+        <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
           <TrendingDown className="h-3.5 w-3.5 text-rose-500" aria-hidden="true" />
           Burn vs
           <TrendingUp className="ml-1 h-3.5 w-3.5 text-emerald-500" aria-hidden="true" />
@@ -290,10 +290,10 @@ function CashChart({
               <div
                 className={`w-full rounded-t transition-all duration-200 ${
                   isZero
-                    ? 'bg-rose-200'
+                    ? 'bg-rose-200 dark:bg-rose-500/70'
                     : p.month === 0
-                      ? 'bg-indigo-300'
-                      : 'bg-emerald-400 group-hover:bg-emerald-500'
+                      ? 'bg-indigo-300 dark:bg-indigo-400/80'
+                      : 'bg-emerald-400 group-hover:bg-emerald-500 dark:bg-emerald-500/80 dark:group-hover:bg-emerald-400'
                 }`}
                 style={{ height: `${(h / maxBarHeight) * 100}%` }}
               />
@@ -310,7 +310,7 @@ function CashChart({
         <span>Month {displayMonths}</span>
       </div>
 
-      <p className="mt-4 text-xs leading-relaxed text-slate-500">
+      <p className="mt-4 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
         Each bar is one month of projected cash. The downward slope flattens as MRR grows — that
         flattening is the value of growth on runway. Hover any bar for the exact balance.
       </p>

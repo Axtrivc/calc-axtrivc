@@ -6,6 +6,7 @@ import { computeFee } from '@/lib/stripe';
 import { computeFreelanceRate } from '@/lib/freelance';
 import { computeRunway } from '@/lib/runway';
 import { compareEntities } from '@/lib/tax';
+import { compareScorp } from '@/lib/scorp';
 import { usd, usdCompact, pct } from '@/lib/format';
 import InteractiveSlider from '@/components/InteractiveSlider';
 import AnimateNumber from '@/components/AnimateNumber';
@@ -28,7 +29,7 @@ import AnimateNumber from '@/components/AnimateNumber';
 function WidgetShell({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="mt-5 rounded-xl border border-white/70 bg-white/40 p-3.5 backdrop-blur-md"
+      className="mt-5 rounded-xl border border-white/70 bg-white/40 p-3.5 backdrop-blur-md dark:border-white/[0.07] dark:bg-white/[0.03]"
       onPointerDown={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
       onTouchStart={(e) => e.stopPropagation()}
@@ -55,13 +56,13 @@ export function StripeMiniWidget() {
   return (
     <WidgetShell>
       <div className="mb-2.5 flex items-baseline justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
           Charge amount
         </span>
         <AnimateNumber
           value={amount}
           format={(n) => usd(n)}
-          className="readout text-sm font-semibold text-slate-900"
+          className="readout text-sm font-semibold text-slate-900 dark:text-white"
         />
       </div>
 
@@ -75,20 +76,20 @@ export function StripeMiniWidget() {
       />
 
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-lg border border-white/70 bg-white/50 px-2.5 py-1.5 backdrop-blur">
-          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-500">Fee</div>
+        <div className="rounded-lg border border-white/70 bg-white/50 px-2.5 py-1.5 backdrop-blur dark:border-white/[0.07] dark:bg-white/[0.03]">
+          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Fee</div>
           <AnimateNumber
             value={r.fee}
             format={(n) => `−${usd(n)}`}
             className="readout block text-sm font-semibold text-rose-600"
           />
         </div>
-        <div className="rounded-lg border border-white/70 bg-white/50 px-2.5 py-1.5 backdrop-blur">
-          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-500">You net</div>
+        <div className="rounded-lg border border-white/70 bg-white/50 px-2.5 py-1.5 backdrop-blur dark:border-white/[0.07] dark:bg-white/[0.03]">
+          <div className="text-[9px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">You net</div>
           <AnimateNumber
             value={r.net}
             format={(n) => usd(n)}
-            className="readout block text-sm font-semibold text-slate-900"
+            className="readout block text-sm font-semibold text-slate-900 dark:text-white"
           />
         </div>
       </div>
@@ -96,7 +97,7 @@ export function StripeMiniWidget() {
       {/* Glowing dual-tone net-vs-fee meter.
           Emerald = the share you keep; Rose = the share Stripe takes.
           Both segments are spring-animated and carry a soft glow for energy. */}
-      <div className="mt-2.5 flex h-2 overflow-hidden rounded-full bg-slate-200/70 ring-1 ring-inset ring-white/60">
+      <div className="mt-2.5 flex h-2 overflow-hidden rounded-full bg-slate-200/70 ring-1 ring-inset ring-white/60 dark:bg-white/[0.08] dark:ring-white/[0.05]">
         <motion.div
           className="relative h-full overflow-hidden rounded-l-full bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_8px_rgba(16,185,129,0.5)]"
           animate={{ width: `${netPct}%` }}
@@ -111,9 +112,9 @@ export function StripeMiniWidget() {
           transition={{ type: 'spring', stiffness: 140, damping: 22, mass: 0.6 }}
         />
       </div>
-      <p className="mt-1.5 text-[10px] text-slate-500">
+      <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">
         Domestic · 2.9% + $0.30 · you keep{' '}
-        <AnimateNumber value={netPct} format={(n) => pct(n)} className="readout font-medium text-emerald-600" />{' '}
+        <AnimateNumber value={netPct} format={(n) => pct(n)} className="readout font-medium text-emerald-600 dark:text-emerald-400" />{' '}
         · fee{' '}
         <AnimateNumber value={feePct} format={(n) => pct(n)} className="readout font-medium text-rose-500" />
       </p>
@@ -162,7 +163,7 @@ export function FreelanceMiniWidget() {
               }}
               onPointerDown={(e) => e.stopPropagation()}
               className={`relative rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-                isActive ? 'text-white' : 'text-slate-500 hover:text-slate-900'
+                isActive ? 'text-white' : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
               }`}
               aria-pressed={isActive}
             >
@@ -179,7 +180,7 @@ export function FreelanceMiniWidget() {
         })}
       </div>
       <div className="flex items-center gap-2 text-sm">
-        <span className="readout rounded-lg border border-white/70 bg-white/60 px-2 py-1 text-slate-700 backdrop-blur">
+        <span className="readout rounded-lg border border-white/70 bg-white/60 px-2 py-1 text-slate-700 backdrop-blur dark:border-white/[0.08] dark:bg-white/[0.05] dark:text-slate-200">
           {usd(income, 0)}
         </span>
         <span className="text-emerald-500">→</span>
@@ -187,9 +188,9 @@ export function FreelanceMiniWidget() {
           <AnimateNumber value={r.hourlyRate} format={(n) => `${usd(n, 0)}/hr`} />
         </span>
       </div>
-      <p className="mt-2 text-[10px] text-slate-500">
-        Day <span className="readout text-slate-600">{usd(r.dayRate, 0)}</span> · Month{' '}
-        <span className="readout text-slate-600">{usd(r.monthlyRate, 0)}</span> · 30% tax · 25h/wk
+      <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+        Day <span className="readout text-slate-600 dark:text-slate-300">{usd(r.dayRate, 0)}</span> · Month{' '}
+        <span className="readout text-slate-600 dark:text-slate-300">{usd(r.monthlyRate, 0)}</span> · 30% tax · 25h/wk
       </p>
     </WidgetShell>
   );
@@ -239,11 +240,11 @@ export function RunwayMiniWidget() {
   return (
     <WidgetShell>
       <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Starting cash</span>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Starting cash</span>
         <AnimateNumber
           value={cash}
           format={(n) => usdCompact(n)}
-          className="readout text-sm font-semibold text-slate-900"
+          className="readout text-sm font-semibold text-slate-900 dark:text-white"
         />
       </div>
 
@@ -257,7 +258,7 @@ export function RunwayMiniWidget() {
       />
 
       <div className="mt-3 mb-1.5 flex items-baseline justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Cash trajectory</span>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">Cash trajectory</span>
         <span className="readout text-sm font-bold" style={{ color: toneColor }}>
           {months === null ? '∞' : `${months}mo`}
         </span>
@@ -346,17 +347,17 @@ export function RunwayMiniWidget() {
         {/* Floating tooltip readout for the hovered month */}
         {activePt && activeIdx !== null && (
           <div
-            className="pointer-events-none absolute -top-1 z-10 -translate-x-1/2 -translate-y-full rounded-md border border-white/80 bg-white/90 px-2 py-1 text-[10px] shadow-[0_4px_12px_rgba(15,23,42,0.12)] backdrop-blur"
+            className="pointer-events-none absolute -top-1 z-10 -translate-x-1/2 -translate-y-full rounded-md border border-white/80 bg-white/90 px-2 py-1 text-[10px] shadow-[0_4px_12px_rgba(15,23,42,0.12)] backdrop-blur dark:border-white/10 dark:bg-slate-800/95 dark:shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
             style={{ left: `${(px(activeIdx) / W) * 100}%` }}
           >
             <span className="readout font-semibold" style={{ color: toneColor }}>
               {usdCompact(Math.max(0, activePt.cash))}
             </span>
-            <span className="ml-1 text-slate-400">mo {activeIdx}</span>
+            <span className="ml-1 text-slate-400 dark:text-slate-500">mo {activeIdx}</span>
           </div>
         )}
       </div>
-      <p className="mt-1.5 text-[10px] text-slate-500">
+      <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">
         <span className="readout">{usdCompact(cash)}</span> cash · $50k burn · $10k MRR · +8%/mo
       </p>
     </WidgetShell>
@@ -483,7 +484,7 @@ export function TaxMiniWidget() {
               }}
               onPointerDown={(e) => e.stopPropagation()}
               className={`relative rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
-                isActive ? 'text-white' : 'text-slate-500 hover:text-slate-900'
+                isActive ? 'text-white' : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
               }`}
               aria-pressed={isActive}
             >
@@ -508,7 +509,7 @@ export function TaxMiniWidget() {
           gradientId="gauge-llc"
           from="#34D399"
           to="#14B8A6"
-          textColor="text-emerald-600"
+          textColor="text-emerald-600 dark:text-emerald-400"
           ariaLabel={`LLC effective tax rate ${pct(r.llc.effectiveRate, 1)}`}
         />
         <EnergyGauge
@@ -518,18 +519,18 @@ export function TaxMiniWidget() {
           gradientId="gauge-ccorp"
           from="#FBBF24"
           to="#FB923C"
-          textColor="text-amber-600"
+          textColor="text-amber-600 dark:text-amber-400"
           ariaLabel={`C-Corp effective tax rate ${pct(r.ccorp.effectiveRate, 1)}`}
         />
       </div>
-      <p className="mt-2 text-center text-[10px] text-slate-500">
-        Federal tax · <span className="readout text-slate-600">{usd(r.delta, 0)}</span> delta · winner:{' '}
+      <p className="mt-2 text-center text-[10px] text-slate-500 dark:text-slate-400">
+        Federal tax · <span className="readout text-slate-600 dark:text-slate-300">{usd(r.delta, 0)}</span> delta · winner:{' '}
         <span
           className={
             r.winner === 'llc'
-              ? 'font-medium text-emerald-600'
+              ? 'font-medium text-emerald-600 dark:text-emerald-400'
               : r.winner === 'ccorp'
-                ? 'font-medium text-amber-600'
+                ? 'font-medium text-amber-600 dark:text-amber-400'
                 : 'text-slate-500'
           }
         >
@@ -537,5 +538,110 @@ export function TaxMiniWidget() {
         </span>
       </p>
     </WidgetShell>
+  );
+}
+
+/* ---------------------------------------------------------------
+   5. S-CORP — LLC vs S-Corp net-income bars at a 40% salary policy
+   --------------------------------------------------------------- */
+export function ScorpMiniWidget() {
+  const [profit, setProfit] = useState(200000);
+  // Salary policy fixed at 40% of profit for the preview — the full tool lets
+  // you drag it; a card preview should show one honest, defensible scenario.
+  const r = useMemo(() => compareScorp(profit, profit * 0.4, 1200), [profit]);
+  const presets = [80000, 150000, 250000, 500000];
+  const maxNet = Math.max(r.llc.afterTax, r.scorp.afterTax, 1);
+
+  return (
+    <WidgetShell>
+      <div className="mb-3 flex flex-wrap gap-1.5">
+        {presets.map((p) => {
+          const isActive = profit === p;
+          return (
+            <button
+              key={p}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setProfit(p);
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              className={`relative rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
+                isActive ? 'text-white' : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
+              }`}
+              aria-pressed={isActive}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="scorp-active-pill"
+                  className="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 shadow-[0_4px_12px_rgba(16,185,129,0.35)]"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+              {usdCompact(p)}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="space-y-2">
+        <MiniBar
+          label="LLC"
+          value={r.llc.afterTax}
+          max={maxNet}
+          barClass="from-sky-500 to-cyan-400"
+        />
+        <MiniBar
+          label="S-Corp"
+          value={r.scorp.afterTax}
+          max={maxNet}
+          barClass="from-emerald-500 to-teal-400"
+        />
+      </div>
+
+      <p className="mt-2 text-center text-[10px] text-slate-500 dark:text-slate-400">
+        You keep, after federal tax · salary = 40% of profit ·{' '}
+        <span className={`readout font-semibold ${r.winner === 'scorp' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300'}`}>
+          {r.winner === 'scorp' ? '+' : '−'}
+          {usd(r.delta, 0)}/yr
+        </span>{' '}
+        for the S-Corp
+      </p>
+    </WidgetShell>
+  );
+}
+
+function MiniBar({
+  label,
+  value,
+  max,
+  barClass,
+}: {
+  label: string;
+  value: number;
+  max: number;
+  barClass: string;
+}) {
+  const w = Math.max(2, (value / max) * 100);
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-11 shrink-0 text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        {label}
+      </span>
+      <div className="relative h-6 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-white/[0.06]">
+        <motion.div
+          className={`absolute inset-y-0 left-0 rounded-full bg-gradient-to-r ${barClass}`}
+          initial={false}
+          animate={{ width: `${w}%` }}
+          transition={{ type: 'spring', stiffness: 160, damping: 24 }}
+        />
+      </div>
+      <AnimateNumber
+        value={value}
+        format={(n) => usdCompact(n)}
+        className="readout w-14 shrink-0 text-right text-xs font-bold text-slate-700 dark:text-slate-200"
+      />
+    </div>
   );
 }
