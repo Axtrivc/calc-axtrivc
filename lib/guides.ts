@@ -174,6 +174,38 @@ const GUIDE_ENTRIES: Omit<Guide, 'href'>[] = [
     minutes: 15,
     related: ['ltv-cac-calculator', 'break-even-calculator', 'discount-impact-calculator'],
   },
+  {
+    slug: 'founder-equity-splits',
+    title: 'Splitting Equity With Co-founders',
+    description:
+      'The co-founder split decided the way investors expect it decided: a four-ledger contribution method with an adjustment window, four-year vesting with a one-year cliff and the buyback that backs it, the five clauses that go in the founders\u2019 agreement — including the 83(b) election and its unforgiving 30-day window — and a dilution rehearsal that runs today\u2019s split through the real financing path, engine-computed end to end.',
+    minutes: 15,
+    related: ['cap-table-dilution-calculator', 'safe-note-calculator'],
+  },
+  {
+    slug: 'cash-flow-on-variable-income',
+    title: 'Cash Flow on Variable Income',
+    description:
+      'Lumpy income fails as a schedule, not an income: this guide splits every deposit across operating, tax, and owner-pay accounts, sets a fixed salary from the target-income method, sizes the buffer in months of the must-pay floor and thickens it for slow collection terms, reserves tax at the current-year line while remitting on the smallest \u00A76654 safe harbor, and orders the bad-month levers — collect, cut, then draw.',
+    minutes: 14,
+    related: [
+      'freelance-hourly-rate-calculator',
+      'late-payment-cost-calculator',
+      'quarterly-estimated-tax-calculator',
+    ],
+  },
+  {
+    slug: 'state-taxes-for-the-self-employed',
+    title: 'State Taxes for the Self-Employed',
+    description:
+      'No-tax states, flat rates, and the SALT cap — a map, not tax advice.',
+    minutes: 15,
+    related: [
+      'llc-vs-ccorp-tax-calculator',
+      'home-office-deduction-calculator',
+      's-corp-tax-calculator',
+    ],
+  },
 ];
 
 /** href is derived, never hand-written — the trailing slash is guaranteed. */
