@@ -29,6 +29,22 @@ import {
   RunwayMiniWidget,
   TaxMiniWidget,
   ScorpMiniWidget,
+  EstimatedTaxMiniWidget,
+  RetirementMiniWidget,
+  SeTaxMiniWidget,
+  QbiMiniWidget,
+  HomeOfficeMiniWidget,
+  PayTypeMiniWidget,
+  BreakEvenMiniWidget,
+  CapTableMiniWidget,
+  DiscountMiniWidget,
+  HsaMiniWidget,
+  LateFeeMiniWidget,
+  LtvCacMiniWidget,
+  MileageMiniWidget,
+  RdCreditMiniWidget,
+  RothMiniWidget,
+  SafeNoteMiniWidget,
 } from '@/components/HomeWidgets';
 import { useToast } from '@/components/Toast';
 import { copyText } from '@/lib/clipboard';
@@ -68,7 +84,7 @@ const accentMap: Record<
     glow: 'before:from-emerald-500/10',
     bg: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
     chip: 'bg-emerald-50 text-emerald-700 ring-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-500/25',
-    text: 'text-emerald-600 dark:text-emerald-300',
+    text: 'text-emerald-700 dark:text-emerald-300',
     ring: 'hover:border-emerald-300/80 dark:hover:border-emerald-500/40',
     bar: 'from-emerald-500 to-teal-500',
   },
@@ -76,7 +92,7 @@ const accentMap: Record<
     glow: 'before:from-sky-500/10',
     bg: 'bg-gradient-to-br from-sky-500 to-sky-600',
     chip: 'bg-sky-50 text-sky-700 ring-sky-100 dark:bg-sky-500/15 dark:text-sky-300 dark:ring-sky-500/25',
-    text: 'text-sky-600 dark:text-sky-300',
+    text: 'text-sky-700 dark:text-sky-300',
     ring: 'hover:border-sky-300/80 dark:hover:border-sky-500/40',
     bar: 'from-sky-500 to-cyan-500',
   },
@@ -84,7 +100,7 @@ const accentMap: Record<
     glow: 'before:from-amber-500/10',
     bg: 'bg-gradient-to-br from-amber-500 to-amber-600',
     chip: 'bg-amber-50 text-amber-700 ring-amber-100 dark:bg-amber-500/15 dark:text-amber-300 dark:ring-amber-500/25',
-    text: 'text-amber-600 dark:text-amber-300',
+    text: 'text-amber-700 dark:text-amber-300',
     ring: 'hover:border-amber-300/80 dark:hover:border-amber-500/40',
     bar: 'from-amber-500 to-orange-500',
   },
@@ -92,13 +108,30 @@ const accentMap: Record<
 
 const categories = ['All', 'Payments', 'Freelancing', 'Startups', 'Taxes'];
 
-// Map calculator slug -> live mini widget
+// Map calculator slug -> live mini widget. Every entry in calculators should
+// have a widget here; unmapped cards simply render without a live preview.
 const widgetMap: Record<string, ReactNode> = {
   'stripe-fee-calculator': <StripeMiniWidget />,
   'freelance-hourly-rate-calculator': <FreelanceMiniWidget />,
   'saas-runway-calculator': <RunwayMiniWidget />,
   'llc-vs-ccorp-tax-calculator': <TaxMiniWidget />,
   's-corp-tax-calculator': <ScorpMiniWidget />,
+  'quarterly-estimated-tax-calculator': <EstimatedTaxMiniWidget />,
+  'solo-401k-calculator': <RetirementMiniWidget />,
+  'self-employment-tax-calculator': <SeTaxMiniWidget />,
+  'qbi-deduction-calculator': <QbiMiniWidget />,
+  'home-office-deduction-calculator': <HomeOfficeMiniWidget />,
+  '1099-vs-w2-calculator': <PayTypeMiniWidget />,
+  'break-even-calculator': <BreakEvenMiniWidget />,
+  'cap-table-dilution-calculator': <CapTableMiniWidget />,
+  'discount-impact-calculator': <DiscountMiniWidget />,
+  'hsa-calculator': <HsaMiniWidget />,
+  'late-payment-cost-calculator': <LateFeeMiniWidget />,
+  'ltv-cac-calculator': <LtvCacMiniWidget />,
+  'mileage-deduction-calculator': <MileageMiniWidget />,
+  'rd-tax-credit-calculator': <RdCreditMiniWidget />,
+  'roth-vs-traditional-calculator': <RothMiniWidget />,
+  'safe-note-calculator': <SafeNoteMiniWidget />,
 };
 
 const bySlug = new Map(calculators.map((c) => [c.slug, c]));
@@ -221,7 +254,7 @@ export default function HomePageClient() {
     <div className="cursor-spotlight relative">
       {/* ===== Workspace command bar (top status strip) ===== */}
       <section className="bg-transparent">
-        <div className="container-page flex h-9 items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-500">
+        <div className="container-page flex h-9 items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2">
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -229,7 +262,7 @@ export default function HomePageClient() {
             </span>
             <span className="uppercase tracking-wider">Local compute engine · Zero-latency</span>
           </div>
-          <span className="hidden font-mono uppercase tracking-wider text-slate-400 sm:block dark:text-slate-600">
+          <span className="hidden font-mono uppercase tracking-wider text-slate-500 sm:block dark:text-slate-400">
             Workspace / Personal Finance Suite
           </span>
         </div>
@@ -269,9 +302,9 @@ export default function HomePageClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.12 }}
             >
-              Pricing, payment fees, entity structure, owner compensation, runway — five
-              instruments that remember your numbers, save your scenarios, and never send a single
-              digit to a server.
+              Pricing, payment fees, entity structure, owner compensation, runway —{' '}
+              {calculators.length} instruments that remember your numbers, save your scenarios, and
+              never send a single digit to a server.
             </motion.p>
 
             {/* Search */}
@@ -305,7 +338,11 @@ export default function HomePageClient() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.24 }}
           >
-            <SummaryStat icon={Cpu} value="5 active engines" sub="Ready for instant calculation" />
+            <SummaryStat
+              icon={Cpu}
+              value={`${calculators.length} active engines`}
+              sub="Ready for instant calculation"
+            />
             <SummaryStat icon={ShieldCheck} value="100% private" sub="Zero server logs & no registration" />
             {mounted && scenarios.length > 0 ? (
               <SummaryStat
@@ -332,9 +369,9 @@ export default function HomePageClient() {
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <h2 className="flex items-center gap-2 text-base font-bold tracking-tight text-slate-900 dark:text-white">
               <Workflow className="h-4 w-4 text-indigo-500 dark:text-indigo-300" aria-hidden="true" />
-              One workflow, five instruments
+              One workflow, {calculators.length} instruments
             </h2>
-            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Price → Bill → Structure → Compensate → Sustain
             </span>
           </div>
@@ -348,15 +385,15 @@ export default function HomePageClient() {
                   <li key={c.slug}>
                     <Link
                       href={c.href}
-                      className="group flex h-full flex-col rounded-xl border border-white/70 bg-white/50 p-3.5 backdrop-blur transition hover:-translate-y-0.5 hover:shadow-md dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-white/[0.12] dark:hover:shadow-black/30"
+                      className="focus-calm group flex h-full flex-col rounded-xl border border-white/70 bg-white/50 p-3.5 backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-white/[0.12] dark:hover:shadow-black/30"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="readout text-[10px] font-bold tracking-widest text-slate-300 dark:text-slate-600">
+                        <span className="readout text-[10px] font-bold tracking-widest text-slate-300 dark:text-slate-500">
                           {String(c.stage).padStart(2, '0')}
                         </span>
                         <Icon className={`h-4 w-4 ${a.text}`} aria-hidden="true" />
                       </div>
-                      <span className="mt-2 font-mono text-[10px] font-bold uppercase tracking-widest text-slate-400 transition group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">
+                      <span className="mt-2 font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500 transition group-hover:text-slate-600 dark:text-slate-400 dark:group-hover:text-slate-300">
                         {c.stageLabel}
                       </span>
                       <span className="mt-0.5 text-sm font-semibold leading-snug text-slate-800 transition group-hover:text-slate-950 dark:text-slate-200 dark:group-hover:text-white">
@@ -400,7 +437,7 @@ export default function HomePageClient() {
                   <Pin className="h-3.5 w-3.5" aria-hidden="true" /> Pinned
                 </h3>
                 {pinnedCalcs.length === 0 ? (
-                  <p className="text-xs text-slate-400 dark:text-slate-500">Nothing pinned yet.</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Nothing pinned yet.</p>
                 ) : (
                   <div className="flex flex-wrap gap-1.5">
                     {pinnedCalcs.map((c) => {
@@ -410,7 +447,7 @@ export default function HomePageClient() {
                         <Link
                           key={c.slug}
                           href={c.href}
-                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition hover:-translate-y-0.5 ${a.chip}`}
+                          className={`focus-calm inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset transition hover:-translate-y-0.5 ${a.chip}`}
                         >
                           <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                           {c.shortTitle ?? c.title}
@@ -427,18 +464,18 @@ export default function HomePageClient() {
                   <History className="h-3.5 w-3.5" aria-hidden="true" /> Recent
                 </h3>
                 {recentCalcs.length === 0 ? (
-                  <p className="text-xs text-slate-400 dark:text-slate-500">No recent activity yet.</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">No recent activity yet.</p>
                 ) : (
                   <ul className="space-y-1.5">
                     {recentCalcs.slice(0, 4).map((r) => (
                       <li key={r.slug} className="flex items-center justify-between gap-2">
                         <Link
                           href={r.calc!.href}
-                          className="truncate text-sm font-medium text-slate-700 transition hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300"
+                          className="focus-calm truncate text-sm font-medium text-slate-700 transition hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300"
                         >
                           {r.calc!.shortTitle ?? r.calc!.title}
                         </Link>
-                        <span className="shrink-0 font-mono text-[10px] text-slate-500 dark:text-slate-500">{relTime(r.ts)}</span>
+                        <span className="shrink-0 font-mono text-[10px] text-slate-500 dark:text-slate-400">{relTime(r.ts)}</span>
                       </li>
                     ))}
                   </ul>
@@ -451,25 +488,25 @@ export default function HomePageClient() {
                   <Bookmark className="h-3.5 w-3.5" aria-hidden="true" /> Saved scenarios
                 </h3>
                 {scenarios.length === 0 ? (
-                  <p className="text-xs text-slate-400 dark:text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Save a scenario inside any calculator to replay or share it later.
                   </p>
                 ) : (
                   <ul className="space-y-2">
                     {scenarios.slice(0, 4).map((s) => (
                       <li key={s.id} className="group flex items-center gap-2">
-                        <Link href={scenarioHref(s)} className="min-w-0 flex-1" title={scenarioSummary(s)}>
+                        <Link href={scenarioHref(s)} className="focus-calm min-w-0 flex-1 rounded-md" title={scenarioSummary(s)}>
                           <span className="block truncate text-sm font-medium text-slate-700 transition group-hover:text-indigo-600 dark:text-slate-300 dark:group-hover:text-indigo-300">
                             {s.name}
                           </span>
-                          <span className="block truncate font-mono text-[10px] text-slate-500 dark:text-slate-500">
+                          <span className="block truncate font-mono text-[10px] text-slate-500 dark:text-slate-400">
                             {scenarioSummary(s)}
                           </span>
                         </Link>
                         <button
                           type="button"
                           onClick={() => handleDeleteScenario(s.id)}
-                          className="shrink-0 rounded-md p-1 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:text-slate-600 dark:hover:bg-rose-500/10 dark:hover:text-rose-400"
+                          className="focus-calm shrink-0 rounded-md p-1 text-slate-300 transition hover:bg-rose-50 hover:text-rose-500 dark:text-slate-600 dark:hover:bg-rose-500/10 dark:hover:text-rose-400"
                           aria-label={`Delete scenario ${s.name}`}
                         >
                           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -508,7 +545,7 @@ export default function HomePageClient() {
                   key={cat}
                   type="button"
                   onClick={() => setActiveCat(cat)}
-                  className={`relative rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                  className={`focus-calm relative rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                     isActive ? 'text-white' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
                   }`}
                   aria-pressed={isActive}
@@ -529,6 +566,12 @@ export default function HomePageClient() {
 
         {filtered.length === 0 ? (
           <div className="glass-card border-dashed border-slate-300/80 p-12 text-center dark:border-white/15">
+            <span
+              className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-violet-500/10 text-indigo-600 ring-1 ring-inset ring-indigo-200/60 dark:from-indigo-500/15 dark:to-violet-500/15 dark:text-indigo-300 dark:ring-indigo-500/25"
+              aria-hidden="true"
+            >
+              <Search className="h-5 w-5" />
+            </span>
             <p className="text-slate-600 dark:text-slate-300">
               No calculators match <strong className="text-slate-900 dark:text-white">&ldquo;{query}&rdquo;</strong>. Try a
               different term or category.
@@ -554,7 +597,9 @@ export default function HomePageClient() {
                   initial={{ opacity: 0, y: 20, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ type: 'spring', stiffness: 260, damping: 26, delay: i * 0.05 }}
+                  // Cap the stagger so the tail of the 21-card grid isn't left
+                  // waiting a full second before its entrance.
+                  transition={{ type: 'spring', stiffness: 260, damping: 26, delay: Math.min(i * 0.05, 0.45) }}
                 >
                   <CalculatorCard
                     c={c}
@@ -586,7 +631,7 @@ export default function HomePageClient() {
             {benefits.map((b, i) => (
               <motion.div
                 key={b.title}
-                className="glass-card p-5 transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-indigo-300/80 hover:shadow-[0_20px_40px_rgba(79,70,229,0.12)] dark:hover:border-indigo-400/30 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
+                className="glass-card p-5 transition-all duration-200 ease-out hover:-translate-y-1.5 hover:border-indigo-300/80 hover:shadow-[0_20px_40px_rgba(79,70,229,0.12)] dark:hover:border-indigo-400/30 dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
@@ -617,13 +662,13 @@ function SummaryStat({
   sub: string;
 }) {
   return (
-    <div className="glass-card flex items-center gap-3 p-5 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-indigo-300/80 hover:shadow-[0_16px_32px_rgba(79,70,229,0.10)] dark:hover:border-indigo-400/30 dark:hover:shadow-[0_16px_32px_rgba(0,0,0,0.35)]">
+    <div className="glass-card flex items-center gap-3 p-5 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-indigo-300/80 hover:shadow-[0_16px_32px_rgba(79,70,229,0.10)] dark:hover:border-indigo-400/30 dark:hover:shadow-[0_16px_32px_rgba(0,0,0,0.35)]">
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/10 to-violet-500/10 text-indigo-600 ring-1 ring-inset ring-indigo-200/60 dark:from-indigo-500/15 dark:to-violet-500/15 dark:text-indigo-300 dark:ring-indigo-500/25">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
       <div className="min-w-0">
         <div className="readout text-base font-semibold text-slate-900 dark:text-white">{value}</div>
-        <div className="mt-0.5 text-[12px] leading-snug text-slate-500 dark:text-slate-400">{sub}</div>
+        <div className="mt-0.5 text-xs leading-snug text-slate-500 dark:text-slate-400">{sub}</div>
       </div>
     </div>
   );
@@ -654,7 +699,7 @@ function CalculatorCard({
 
   return (
     <article
-      className={`group glass-card relative flex h-full flex-col overflow-hidden p-5 ${a.ring} transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(79,70,229,0.12)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.45)]`}
+      className={`group glass-card relative flex h-full flex-col overflow-hidden p-5 ${a.ring} transition-all duration-200 ease-out hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(79,70,229,0.12)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.45)]`}
     >
       {/* accent glow */}
       <div
@@ -663,14 +708,14 @@ function CalculatorCard({
       />
 
       <div className="relative flex items-start justify-between">
-        <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${a.bg} text-white shadow-[0_8px_20px_rgba(79,70,229,0.25)] transition-transform duration-300 group-hover:scale-105`}>
+        <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${a.bg} text-white shadow-[0_8px_20px_rgba(79,70,229,0.25)] transition-transform duration-200 group-hover:scale-105`}>
           <Icon className="h-6 w-6" aria-hidden="true" />
         </span>
         <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={onTogglePin}
-            className={`rounded-md p-1.5 transition ${
+            className={`focus-calm rounded-md p-1.5 transition ${
               pinned
                 ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300'
                 : 'text-slate-300 hover:bg-slate-100 hover:text-slate-500 dark:text-slate-600 dark:hover:bg-white/[0.06] dark:hover:text-slate-400'
@@ -688,7 +733,7 @@ function CalculatorCard({
 
       {/* Title is the navigation affordance for the header region */}
       <h3 className="relative mt-5 text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-        <Link href={c.href} className="transition hover:opacity-80 after:absolute after:inset-0">
+        <Link href={c.href} className="focus-calm rounded-md transition hover:opacity-80 after:absolute after:inset-0">
           {c.title}
         </Link>
       </h3>
@@ -711,7 +756,7 @@ function CalculatorCard({
       <div className="relative mt-5 flex items-center justify-between border-t border-white/60 pt-4 dark:border-white/[0.07]">
         <Link
           href={c.href}
-          className={`inline-flex items-center gap-1.5 text-sm font-semibold ${a.text} transition hover:gap-2`}
+          className={`focus-calm inline-flex items-center gap-1.5 rounded-md text-sm font-semibold ${a.text} transition hover:gap-2`}
         >
           Open calculator
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -720,7 +765,7 @@ function CalculatorCard({
           <button
             type="button"
             onClick={() => onShare()}
-            className="rounded-md px-2 py-1 text-xs font-medium text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-white/[0.06] dark:hover:text-slate-300"
+            className="focus-calm rounded-md px-2 py-1 text-xs font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-600 dark:text-slate-400 dark:hover:bg-white/[0.06] dark:hover:text-slate-300"
             aria-label={`Copy link to ${c.title}`}
           >
             Share

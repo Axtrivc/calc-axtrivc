@@ -76,7 +76,9 @@ export default function CalculatorPageShell({
 }) {
   const Icon = iconMap[calc.icon] ?? CreditCard;
   const a = accentMap[calc.accent];
-  const stageCount = calculators.length;
+  // The workflow has five narrative stages; the catalog has more tools than
+  // stages. "of N" must track the workflow depth, not the catalog length.
+  const stageCount = Math.max(...calculators.map((c) => c.stage));
 
   // Breadcrumb structured data — matches the visible nav below.
   const breadcrumbJsonLd = {
@@ -101,7 +103,7 @@ export default function CalculatorPageShell({
       />
 
       <nav className="mb-5 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400" aria-label="Breadcrumb">
-        <Link href="/" className="transition hover:text-indigo-600 dark:hover:text-indigo-300">Home</Link>
+        <Link href="/" className="focus-calm rounded-sm transition hover:text-indigo-600 dark:hover:text-indigo-300">Home</Link>
         <ChevronRight className="h-4 w-4" aria-hidden="true" />
         <span className="text-slate-700 dark:text-slate-200">{calc.title}</span>
       </nav>
@@ -190,7 +192,7 @@ export default function CalculatorPageShell({
             <a
               key={anchor.href}
               href={anchor.href}
-              className="whitespace-nowrap border-b-2 border-transparent px-3 py-3 text-sm font-medium text-slate-500 transition hover:border-indigo-400 hover:text-indigo-600 dark:text-slate-400 dark:hover:border-indigo-400/70 dark:hover:text-indigo-300"
+              className="focus-calm whitespace-nowrap rounded-sm border-b-2 border-transparent px-3 py-3 text-sm font-medium text-slate-500 transition hover:border-indigo-400 hover:text-indigo-600 dark:text-slate-400 dark:hover:border-indigo-400/70 dark:hover:text-indigo-300"
             >
               {anchor.label}
             </a>

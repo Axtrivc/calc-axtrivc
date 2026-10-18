@@ -23,9 +23,9 @@ type Accent = Calculator['accent'];
 
 const ACCENT_TEXT: Record<Accent, string> = {
   indigo: 'text-indigo-600 dark:text-indigo-300',
-  emerald: 'text-emerald-600 dark:text-emerald-300',
-  slate: 'text-sky-600 dark:text-sky-300',
-  amber: 'text-amber-600 dark:text-amber-300',
+  emerald: 'text-emerald-700 dark:text-emerald-300',
+  slate: 'text-sky-700 dark:text-sky-300',
+  amber: 'text-amber-700 dark:text-amber-300',
 };
 
 const ACCENT_SOFT: Record<Accent, string> = {
@@ -124,7 +124,7 @@ export function MethodologyGrid({
               </li>
             ))}
           </ul>
-          <p className="mt-4 border-t border-slate-100 pt-3 text-xs leading-relaxed text-slate-400 dark:border-white/[0.07] dark:text-slate-500">
+          <p className="mt-4 border-t border-slate-100 pt-3 text-xs leading-relaxed text-slate-500 dark:border-white/[0.07] dark:text-slate-400">
             Every number the tool returns follows from these statements alone — change one, and the
             output changes exactly as written.
           </p>
@@ -164,7 +164,7 @@ export function ScenarioPanel({
           )}
         </div>
         <span
-          className="chip bg-emerald-50 font-mono text-[10px] uppercase tracking-wider text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+          className="chip bg-emerald-50 font-mono text-[10px] uppercase tracking-wider text-emerald-700 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-500/25"
           title="Generated from this page's own math library at build time — not hand-typed."
         >
           <FlaskConical className="h-3 w-3" aria-hidden="true" />
@@ -199,9 +199,9 @@ export function ScenarioPanel({
 /* ============================ Suite workflow chain ========================= */
 
 /**
- * The CalcSuite positioning, made visible: four instruments, one business
- * finance workflow. Anchors each tool page to its neighbours instead of
- * dumping visitors back to a generic directory.
+ * The CalcSuite positioning, made visible: every instrument in the suite,
+ * one business finance workflow. Anchors each tool page to its neighbours
+ * instead of dumping visitors back to a generic directory.
  */
 export function WorkflowChain({ currentSlug }: { currentSlug: string }) {
   const ordered = [...calculators].sort((a, b) => a.stage - b.stage);
@@ -209,12 +209,12 @@ export function WorkflowChain({ currentSlug }: { currentSlug: string }) {
   return (
     <section id="workflow" aria-labelledby="workflow-title" className="scroll-mt-28">
       <header className="mb-7 max-w-3xl">
-        <p className="font-mono mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+        <p className="font-mono mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
           <span className="inline-block h-3 w-0.5 rounded-full bg-current" aria-hidden="true" />
           The CalcSuite workflow
         </p>
         <h2 id="workflow-title" className="section-title">
-          One financial workflow, five instruments
+          One financial workflow, {calculators.length} instruments
         </h2>
         <p className="mt-3 leading-relaxed text-slate-600 dark:text-slate-300">
           Each tool answers one question in the life of an independent business. When you're done
@@ -237,7 +237,7 @@ export function WorkflowChain({ currentSlug }: { currentSlug: string }) {
               ) : (
                 <Link
                   href={c.href}
-                  className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-4 transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md dark:border-white/[0.08] dark:bg-slate-900/60 dark:hover:border-indigo-500/30 dark:hover:shadow-black/40"
+                  className="focus-calm group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-4 transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md dark:border-white/[0.08] dark:bg-slate-900/60 dark:hover:border-indigo-500/30 dark:hover:shadow-black/40"
                 >
                   <OtherStepBody calc={c} />
                 </Link>
@@ -252,7 +252,7 @@ export function WorkflowChain({ currentSlug }: { currentSlug: string }) {
 
 function StageNumber({ n }: { n: Calculator['stage'] }) {
   return (
-    <span className="readout text-[11px] font-bold tracking-widest text-slate-300 dark:text-slate-600">
+    <span className="readout text-[11px] font-bold tracking-widest text-slate-500 dark:text-slate-400">
       STAGE {String(n).padStart(2, '0')}
     </span>
   );
@@ -284,7 +284,7 @@ function OtherStepBody({ calc }: { calc: Calculator }) {
         {calc.shortTitle ?? calc.title}
       </h3>
       <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">{calc.tagline}</p>
-      <span className="mt-auto flex items-center gap-1 pt-3 text-xs font-semibold text-slate-400 transition group-hover:text-indigo-600 dark:text-slate-500 dark:group-hover:text-indigo-300">
+      <span className="mt-auto flex items-center gap-1 pt-3 text-xs font-semibold text-slate-500 transition group-hover:text-indigo-600 dark:text-slate-400 dark:group-hover:text-indigo-300">
         Open instrument
         <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" aria-hidden="true" />
       </span>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import CalculatorPageShell from '@/components/CalculatorPageShell';
+import ComparisonChart from '@/components/ComparisonChart';
 import StripeCalculator from '@/components/calculators/StripeCalculator';
 import StripeArticle from '@/components/content/StripeArticle';
 import {
@@ -12,17 +13,45 @@ import {
 } from '@/components/professional';
 import { calculators, siteConfig } from '@/lib/site';
 import { STRIPE_RATES, computeFee, type StripeFeeType } from '@/lib/stripe';
-import { pct, usd } from '@/lib/format';
+import { pct, usd, usdCompact } from '@/lib/format';
 
 const calc = calculators.find((c) => c.slug === 'stripe-fee-calculator')!;
+
+/* Year signal for SERP/OG titles — frozen at build time (static export). */
+const YEAR = new Date().getFullYear();
 
 /* Scenario grid amounts — small tickets where the $0.30 dominates, the ACH
    crossover at $625, and enterprise invoices where the cap wins outright. */
 const SCENARIO_AMOUNTS = [10, 50, 100, 250, 500, 625, 1_000, 5_000, 20_000];
 const FEE_TYPES: StripeFeeType[] = ['domestic', 'international', 'ach'];
 
+/* Chart series: effective rate vs charge amount, $10–$1,500. Sample points
+   cluster where the $0.30/x decay curve bends, and hit $625 exactly so the
+   ACH cap kink renders as a true vertex. */
+const CHART_CHARGES = [
+  10, 12, 15, 18, 22, 28, 35, 45, 60, 80, 110, 150, 200, 260, 340, 450, 550,
+  625, 700, 800, 900, 1_050, 1_200, 1_350, 1_500,
+];
+const CHART_SERIES = [
+  {
+    label: 'Domestic card — effective rate',
+    color: '#6366f1',
+    points: CHART_CHARGES.map((x) => ({ x, y: computeFee(x, 'domestic').effectiveRate })),
+  },
+  {
+    label: 'International card — effective rate',
+    color: '#f43f5e',
+    points: CHART_CHARGES.map((x) => ({ x, y: computeFee(x, 'international').effectiveRate })),
+  },
+  {
+    label: 'ACH transfer — effective rate',
+    color: '#10b981',
+    points: CHART_CHARGES.map((x) => ({ x, y: computeFee(x, 'ach').effectiveRate })),
+  },
+];
+
 export const metadata: Metadata = {
-  title: 'Stripe Fee Calculator (2025) — Domestic, International & ACH + Reverse',
+  title: `Stripe Fee Calculator (${YEAR}) — Domestic, International & ACH + Reverse`,
   description:
     'Calculate Stripe processing fees for credit card, international, and ACH payments. Reverse-calculate invoice amounts to ensure exact net payouts.',
   keywords: [
@@ -36,7 +65,7 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: calc.href },
   openGraph: {
-    title: 'Stripe Fee Calculator (2025) — Domestic, International & ACH + Reverse',
+    title: `Stripe Fee Calculator (${YEAR}) — Domestic, International & ACH + Reverse`,
     description:
       'Calculate Stripe fees for any amount. Domestic, international, ACH, plus a reverse calculator to find what to charge to net your target.',
     url: `${siteConfig.url}${calc.href}`,
@@ -55,7 +84,7 @@ export default function StripeFeeCalculatorPage() {
         </section>
 
         {/* Methodology */}
-        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
+        <div className="border-t border-slate-200 pt-12 dark:border-white/[0.07]">
           <SectionShell
             id="methodology"
             eyebrow="Methodology"
@@ -78,7 +107,7 @@ export default function StripeFeeCalculatorPage() {
                 {
                   label: 'Effective rate',
                   expression: 'effective % = fee ÷ charge × 100',
-                  note: 'Rises sharply on micro-transactions — a $3 sale loses far more than 2.9% once the fixed component lands.',
+                  note: 'Rises sharply on micro-transactions — a $3 domestic sale loses 12.9% all-in, and 10.0 of those points are the fixed $0.30 alone (0.30 ÷ 3). Total: 4.4× the headline 2.9%.',
                 },
                 {
                   label: 'Reverse invoice total',
@@ -88,7 +117,8 @@ export default function StripeFeeCalculatorPage() {
               ]}
               assumptions={[
                 'US merchant account on Stripe’s standard published pricing — negotiated or volume discounts are excluded.',
-                'Successful charges only: refund-returned fees, disputes, and certain failed-payment fees are out of scope.',
+                'Successful charges only: refunds (Stripe retains the original processing fee), disputes, and certain failed-payment fees are out of scope.',
+                'Online card pricing only: in-person Terminal (2.7% + 5¢) and keyed-entry (3.4% + $0.30) rates are not modeled.',
                 'Currency conversion (~+1%) on non-USD settlement is not modeled.',
                 'Fees are rounded to the cent; effective rates shown to two decimals.',
               ]}
@@ -126,7 +156,7 @@ export default function StripeFeeCalculatorPage() {
                         <span className="readout block whitespace-nowrap font-medium text-rose-600 dark:text-rose-400">
                           −{usd(r.fee)}
                         </span>
-                        <span className="readout block text-xs text-slate-400">{pct(r.effectiveRate)}</span>
+                        <span className="readout block text-xs text-slate-500 dark:text-slate-400">{pct(r.effectiveRate, 2)}</span>
                       </td>
                     ))}
                     <td className="text-right">
@@ -139,10 +169,23 @@ export default function StripeFeeCalculatorPage() {
               })}
             </tbody>
           </ScenarioPanel>
+
+          <div className="mt-6">
+            <ComparisonChart
+              series={CHART_SERIES}
+              xLabel="Charge amount"
+              yLabel="Effective rate"
+              xFormat={(n) => usdCompact(n)}
+              yFormat={(n) => pct(n)}
+              height={300}
+              marker={{ x: 625, label: '$625 — ACH $5 cap' }}
+              caption="The fixed component decays like $0.30 ÷ ticket: the domestic curve falls from 5.9% at $10 to exactly 3.0% at $300, then flattens toward its 2.9% floor. The ACH line rides flat at 0.8% until the $5 cap engages at $625 (dashed marker); past the kink its effective rate decays like $5 ÷ invoice — the regime where a $20,000 invoice processes for 0.03%. On raw price ACH never crosses above the card lines; the real trade-off is settlement speed and return risk, not arithmetic."
+            />
+          </div>
         </SectionShell>
 
         {/* Deep-dive guide */}
-        <div className="border-t border-slate-200 dark:border-white/[0.08] pt-12 dark:border-white/[0.07]">
+        <div className="border-t border-slate-200 pt-12 dark:border-white/[0.07]">
           <section id="guide" aria-label="Stripe fee guide" className="scroll-mt-28">
             <StripeArticle />
           </section>
@@ -155,17 +198,17 @@ export default function StripeFeeCalculatorPage() {
             {
               label: 'Rate schedule',
               detail:
-                'Standard published US pricing: domestic cards 2.9% + $0.30; international cards add a 1.5% cross-border surcharge to 4.4% + $0.30; ACH direct debit 0.8%, capped at $5.00.',
+                'Standard published US pricing, verified October 2026: domestic cards 2.9% + $0.30; international cards add a 1.5% cross-border surcharge to 4.4% + $0.30; ACH direct debit 0.8%, capped at $5.00.',
             },
             {
               label: 'Out of scope',
               detail:
-                'Currency conversion (~+1%), chargeback/dispute fees, Radar fraud-tool surcharges, and Stripe Invoicing product fees are excluded from all figures.',
+                'In-person Terminal (2.7% + 5¢) and keyed-entry (3.4% + $0.30) rates, currency conversion (~+1%), chargeback/dispute fees, Radar fraud-tool surcharges, and Stripe Invoicing product fees are excluded from all figures.',
             },
             {
               label: 'Reverse-mode verification',
               detail:
-                'Reverse formulas are the closed-form inverse of the forward equations above; both regimes of the ACH cap ($625 boundary) are validated against the forward path on every run.',
+                'Reverse formulas are the closed-form inverse of the forward equations above — the solved charge is re-derived through the forward path, and a development-build invariant asserts the round trip on every call, covering both regimes of the ACH cap ($625 boundary).',
             },
           ]}
           disclaimer="Published pricing varies by country and account agreement — confirm your exact schedule in the Stripe Dashboard before quoting client-facing numbers. Estimates are illustrative, not financial advice."

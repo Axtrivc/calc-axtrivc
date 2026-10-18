@@ -273,7 +273,7 @@ export function SliderControl({
         />
       )}
 
-      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-500 dark:text-slate-500">
+      <div className="mt-1 flex justify-between font-mono text-[10px] text-slate-500 dark:text-slate-400">
         <span>{fmt(min)}</span>
         <span>{fmt(max)}</span>
       </div>

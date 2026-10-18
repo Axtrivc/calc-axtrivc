@@ -450,3 +450,23 @@ html.dark ::selection {
     scroll-behavior: auto !important;
   }
 }
+
+/* ===========================
+   Shell focus ring (appended — homepage & global shell pass)
+   ===========================
+   Brand-consistent keyboard focus for the shell's interactive elements.
+   Pointer clicks stay silent (:focus-visible only), while keyboard focus gets
+   the same two-step indigo ring language the ws-slider thumb already uses.
+   No motion involved, so it is untouched by the reduced-motion block and
+   invisible on paper (rings are not painted in print). */
+.focus-calm:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.9),
+    0 0 0 4px rgba(79, 70, 229, 0.45);
+}
+html.dark .focus-calm:focus-visible {
+  box-shadow:
+    0 0 0 2px rgba(11, 18, 32, 0.9),
+    0 0 0 4px rgba(129, 140, 248, 0.55);
+}

@@ -214,7 +214,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                       tabIndex={-1}
                       onClick={() => it.run()}
                       onMouseEnter={() => setActive(i)}
-                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
+                      className={`focus-calm flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
                         isActive ? 'bg-indigo-50 dark:bg-indigo-500/15' : 'hover:bg-slate-50 dark:hover:bg-white/[0.04]'
                       }`}
                     >
@@ -222,7 +222,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                         className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
                           it.kind === 'action'
                             ? 'bg-slate-100 dark:bg-white/[0.07] text-slate-500 dark:text-slate-400'
-                            : 'bg-indigo-100/70 text-indigo-600 dark:text-indigo-300'
+                            : 'bg-indigo-100/70 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300'
                         }`}
                       >
                         <Icon className="h-[18px] w-[18px]" aria-hidden="true" />

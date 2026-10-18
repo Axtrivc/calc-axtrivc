@@ -45,7 +45,9 @@ export default function ComparisonChart({
   height = 300,
   caption,
   marker,
+  markerColor,
   yMinMode = 'zero',
+  axisLabelClass = 'fill-slate-500 font-mono dark:fill-slate-400 print:fill-slate-600 dark:print:fill-slate-600',
 }: {
   series: ChartSeries[];
   xLabel: string;
@@ -56,8 +58,21 @@ export default function ComparisonChart({
   caption?: string;
   /** Optional vertical reference line at an x value, with its own label. */
   marker?: { x: number; label: string };
+  /**
+   * Hex color for the marker line and its label text. Defaults to the amber
+   * reference tone; pass the annotated series' color when the marker belongs
+   * to that curve (e.g. an indigo breakeven line on indigo series).
+   */
+  markerColor?: string;
   /** 'zero' anchors the y-axis at 0 (default); 'auto' includes negatives. */
   yMinMode?: 'zero' | 'auto';
+  /**
+   * Class override for the axis tick-label text. The default keeps both
+   * themes at WCAG-AA contrast against the card surface (slate-500 on white
+   * in light mode, slate-400 on the deep-space surface in dark) and re-inks
+   * to slate-600 on paper via the print variants.
+   */
+  axisLabelClass?: string;
 }) {
   const W = 720;
   const H = height;
@@ -111,7 +126,7 @@ export default function ComparisonChart({
               x={M.left - 8}
               y={sy(t) + 3.5}
               textAnchor="end"
-              className="fill-slate-400 font-mono dark:fill-slate-500"
+              className={axisLabelClass}
               fontSize="10"
             >
               {yFormat(t)}
@@ -120,22 +135,22 @@ export default function ComparisonChart({
         ))}
         {/* x axis ticks */}
         {xTicks.map((t) => (
-          <text
-            key={`x-${t}`}
-            x={sx(t)}
-            y={H - M.bottom + 16}
-            textAnchor="middle"
-            className="fill-slate-400 font-mono dark:fill-slate-500"
-            fontSize="10"
-          >
-            {xFormat(t)}
-          </text>
+        <text
+          key={`x-${t}`}
+          x={sx(t)}
+          y={H - M.bottom + 16}
+          textAnchor="middle"
+          className={axisLabelClass}
+          fontSize="10"
+        >
+          {xFormat(t)}
+        </text>
         ))}
         {/* axis titles */}
         <text
           x={M.left}
           y={12}
-          className="fill-slate-400 dark:fill-slate-500"
+          className="fill-slate-500 dark:fill-slate-400 print:fill-slate-600 dark:print:fill-slate-600"
           fontSize="9.5"
         >
           {yLabel}
@@ -144,7 +159,7 @@ export default function ComparisonChart({
           x={W - M.right}
           y={H - 4}
           textAnchor="end"
-          className="fill-slate-400 dark:fill-slate-500"
+          className="fill-slate-500 dark:fill-slate-400 print:fill-slate-600 dark:print:fill-slate-600"
           fontSize="9.5"
         >
           {xLabel}
@@ -158,14 +173,15 @@ export default function ComparisonChart({
               x2={sx(marker.x)}
               y1={M.top}
               y2={M.top + ih}
-              stroke="#f59e0b"
+              stroke={markerColor ?? '#f59e0b'}
               strokeWidth="1.5"
               strokeDasharray="5 4"
             />
             <text
               x={sx(marker.x) + 6}
               y={M.top + 10}
-              className="fill-amber-600 font-mono dark:fill-amber-400"
+              className={markerColor ? 'font-mono' : 'fill-amber-600 font-mono dark:fill-amber-400'}
+              style={markerColor ? { fill: markerColor } : undefined}
               fontSize="9.5"
             >
               {marker.label}

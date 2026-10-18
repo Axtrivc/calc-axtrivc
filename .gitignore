@@ -33,3 +33,6 @@ dev.log
 
 # locally installed portable tooling (e.g. portable git)
 .tools/
+
+# mimosa security-scan plugin state
+.mimosa/
