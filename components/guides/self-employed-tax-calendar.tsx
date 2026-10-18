@@ -168,7 +168,7 @@ export default function SelfEmployedTaxCalendar() {
           year ends, as late as the extended filing deadline.
         </li>
       </ol>
-      <div className="not-prose my-8 rounded-2xl border border-indigo-100 bg-indigo-50 p-6 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+      <div className="my-8 rounded-2xl border border-indigo-100 bg-indigo-50 p-6 dark:border-indigo-500/20 dark:bg-indigo-500/10">
         <div className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
           <Flag
             className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600 dark:text-indigo-300"
@@ -442,7 +442,7 @@ export default function SelfEmployedTaxCalendar() {
         ({usd(SE_PER_QUARTER * 0.9)} SE tax + {usd(INCOME_TAX_PER_QUARTER * 0.9)} income tax), a
         discount on the prepayment, not a smaller tax.
       </p>
-      <div className="not-prose my-8 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/[0.08] dark:bg-slate-900/60">
+      <div className="my-8 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/[0.08] dark:bg-slate-900/60">
         <p className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           <AlertTriangle
             className="mt-0.5 h-4 w-4 shrink-0 text-amber-500 dark:text-amber-400"
@@ -721,7 +721,7 @@ export default function SelfEmployedTaxCalendar() {
       {/* ============================ Decision table ============================ */}
       <h2 id="decision-table">The year as one decision</h2>
       <p>The calendar collapses into a lookup table. Find your situation, pay the line it names:</p>
-      <div className="not-prose my-8 overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/[0.08]">
+      <div className="my-8 overflow-x-auto rounded-2xl border border-slate-200 dark:border-white/[0.08]">
         <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className="bg-slate-50 dark:bg-white/[0.04]">
@@ -764,7 +764,7 @@ export default function SelfEmployedTaxCalendar() {
           </tbody>
         </table>
       </div>
-      <div className="not-prose my-8 grid gap-3 sm:grid-cols-3">
+      <div className="my-8 grid gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />

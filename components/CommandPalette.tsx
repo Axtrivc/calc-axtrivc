@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -13,10 +13,12 @@ import {
   Search,
   Trash2,
   Home,
+  BookOpen,
   CornerDownLeft,
   type LucideIcon,
 } from 'lucide-react';
 import { calculators } from '@/lib/site';
+import { guides } from '@/lib/guides';
 import { clearWorkbench } from '@/lib/workbench';
 import { useToast } from '@/components/Toast';
 
@@ -30,7 +32,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 type PaletteItem = {
   id: string;
-  kind: 'calculator' | 'action';
+  kind: 'calculator' | 'guide' | 'action';
   title: string;
   subtitle: string;
   icon: LucideIcon;
@@ -38,10 +40,20 @@ type PaletteItem = {
   run: () => void;
 };
 
+/** Section labels for the results list, keyed by item kind — mirrors the
+ *  Header dropdown's mono micro-label so the guides layer reads as its own
+ *  zone instead of vanishing between the instruments and the actions. */
+const kindLabels: Record<PaletteItem['kind'], string> = {
+  calculator: 'Calculators',
+  guide: 'Guides',
+  action: 'Actions',
+};
+
 /**
  * ⌘K command palette — the workbench's quick launcher.
  *
- * Lists every calculator plus a few workspace actions; arrow keys + Enter
+ * Lists every calculator, every guide in the knowledge base, plus a few
+ * workspace actions, grouped under mono section labels; arrow keys + Enter
  * navigate, Esc closes. Mounted once in the Header so it works on any page.
  */
 export default function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -65,6 +77,21 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
       run: () => {
         onClose();
         router.push(c.href);
+      },
+    }));
+    // Knowledge-base guides (lib/guides.ts): same item shape as calculators —
+    // search runs over title + description, selection navigates to the href
+    // (derived there with the site-wide trailing slash).
+    const guideItems: PaletteItem[] = guides.map((g) => ({
+      id: `guide-${g.slug}`,
+      kind: 'guide',
+      title: g.title,
+      subtitle: g.description,
+      icon: BookOpen,
+      keywords: `${g.title} ${g.description}`.toLowerCase(),
+      run: () => {
+        onClose();
+        router.push(g.href);
       },
     }));
     const actions: PaletteItem[] = [
@@ -95,7 +122,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
         },
       },
     ];
-    return [...calcItems, ...actions];
+    return [...calcItems, ...guideItems, ...actions];
   }, [onClose, router, show]);
 
   const filtered = useMemo(() => {
@@ -180,7 +207,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Jump to a calculator or run a command…"
+                placeholder="Jump to a calculator, guide, or command…"
                 aria-label="Command palette search"
                 role="combobox"
                 aria-expanded="true"
@@ -204,37 +231,49 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                 filtered.map((it, i) => {
                   const isActive = i === active;
                   const Icon = it.icon;
+                  // Decorative section label at each kind boundary — a div,
+                  // hidden from AT (selection is announced via the options).
+                  const startsSection = i === 0 || filtered[i - 1].kind !== it.kind;
                   return (
-                    <button
-                      key={it.id}
-                      id={`command-option-${it.id}`}
-                      type="button"
-                      role="option"
-                      aria-selected={isActive}
-                      tabIndex={-1}
-                      onClick={() => it.run()}
-                      onMouseEnter={() => setActive(i)}
-                      className={`focus-calm flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
-                        isActive ? 'bg-indigo-50 dark:bg-indigo-500/15' : 'hover:bg-slate-50 dark:hover:bg-white/[0.04]'
-                      }`}
-                    >
-                      <span
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                          it.kind === 'action'
-                            ? 'bg-slate-100 dark:bg-white/[0.07] text-slate-500 dark:text-slate-400'
-                            : 'bg-indigo-100/70 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300'
+                    <Fragment key={it.id}>
+                      {startsSection && (
+                        <div
+                          aria-hidden="true"
+                          className="px-3 pb-1 pt-2 font-mono text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400"
+                        >
+                          {kindLabels[it.kind]}
+                        </div>
+                      )}
+                      <button
+                        id={`command-option-${it.id}`}
+                        type="button"
+                        role="option"
+                        aria-selected={isActive}
+                        tabIndex={-1}
+                        onClick={() => it.run()}
+                        onMouseEnter={() => setActive(i)}
+                        className={`focus-calm flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
+                          isActive ? 'bg-indigo-50 dark:bg-indigo-500/15' : 'hover:bg-slate-50 dark:hover:bg-white/[0.05]'
                         }`}
                       >
-                        <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-semibold text-slate-800 dark:text-slate-200">{it.title}</span>
-                        <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{it.subtitle}</span>
-                      </span>
-                      {isActive && (
-                        <CornerDownLeft className="h-4 w-4 shrink-0 text-indigo-400" aria-hidden="true" />
-                      )}
-                    </button>
+                        <span
+                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                            it.kind === 'action'
+                              ? 'bg-slate-100 dark:bg-white/[0.07] text-slate-500 dark:text-slate-400'
+                              : 'bg-indigo-100/70 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-300'
+                          }`}
+                        >
+                          <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold text-slate-800 dark:text-slate-200">{it.title}</span>
+                          <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{it.subtitle}</span>
+                        </span>
+                        {isActive && (
+                          <CornerDownLeft className="h-4 w-4 shrink-0 text-indigo-400" aria-hidden="true" />
+                        )}
+                      </button>
+                    </Fragment>
                   );
                 })
               )}

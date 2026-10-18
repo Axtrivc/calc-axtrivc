@@ -225,7 +225,7 @@ export default function YearEndTaxChecklist() {
         worth less than the moves that do not, but they cannot be recovered in April, and the
         April ones can.
       </p>
-      <div className="not-prose my-8 rounded-2xl border border-indigo-100 bg-indigo-50 p-6 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+      <div className="my-8 rounded-2xl border border-indigo-100 bg-indigo-50 p-6 dark:border-indigo-500/20 dark:bg-indigo-500/10">
         <div className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
           <Flag
             className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600 dark:text-indigo-300"
@@ -404,7 +404,7 @@ export default function YearEndTaxChecklist() {
         {usd(LANDED_HIGH.currentTotalTax, 0)} just deferred (§6654(d)(1); the 110% test keys off
         prior-year AGI, exactly as the verification card below reminds you).
       </p>
-      <div className="not-prose my-8 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/[0.08] dark:bg-slate-900/60">
+      <div className="my-8 rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/[0.08] dark:bg-slate-900/60">
         <p className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           <AlertTriangle
             className="mt-0.5 h-4 w-4 shrink-0 text-amber-500 dark:text-amber-400"
@@ -747,7 +747,7 @@ export default function YearEndTaxChecklist() {
         The last item on the checklist is the one that catches everything the first six missed —
         a reconciliation pass in January, before the IRS runs its own:
       </p>
-      <div className="not-prose my-8 grid gap-3 sm:grid-cols-2">
+      <div className="my-8 grid gap-3 sm:grid-cols-2">
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />

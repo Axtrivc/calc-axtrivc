@@ -126,6 +126,54 @@ const GUIDE_ENTRIES: Omit<Guide, 'href'>[] = [
       'mileage-deduction-calculator',
     ],
   },
+  {
+    slug: 'tax-audit-red-flags',
+    title: 'Tax Audit Red Flags',
+    description:
+      'Ranked by selection probability times preparation cost: the seven flags that move a small-business return into examination — loss streaks, home-office shares, round-number mileage, cash books, 1099 mismatches, SSTB labels, owner salary — the records that close each one, and the process from the first letter to appeal.',
+    minutes: 13,
+    related: [
+      'home-office-deduction-calculator',
+      'mileage-deduction-calculator',
+      'qbi-deduction-calculator',
+    ],
+  },
+  {
+    slug: 'hiring-your-first-employee',
+    title: 'Hiring Your First Employee',
+    description:
+      'The first W-2 hire converts a variable contractor line into a fixed cost stack: employer FICA, FUTA and SUTA, benefits, workers\u2019 comp. This guide loads a salary with every employer-side layer, converts any contractor rate into the salary it is worth, and recomputes your own quarterly estimates on the smaller net.',
+    minutes: 16,
+    related: [
+      '1099-vs-w2-calculator',
+      'self-employment-tax-calculator',
+      'quarterly-estimated-tax-calculator',
+    ],
+  },
+  {
+    slug: 'self-employed-health-insurance',
+    title: 'Self-Employed Health Insurance',
+    description:
+      'Health coverage is usually a freelancer\u2019s second-largest fixed cost, and \u00A7162(l) is the only above-the-line break for it. This guide walks the self-employed health insurance deduction end to end: the three ceilings that can take it away, the month-by-month eligibility ledger for mid-year exits, the 20% QBI give-back, the >2% S-corp shareholder\u2019s FICA-excluded W-2 channel, and where the HSA fits beside the premium.',
+    minutes: 14,
+    related: ['qbi-deduction-calculator', 's-corp-tax-calculator', 'hsa-calculator'],
+  },
+  {
+    slug: 'bookkeeping-that-survives-an-audit',
+    title: 'Bookkeeping That Survives an Audit',
+    description:
+      'A deduction survives an audit only if its records do. This guide separates business and personal money first, then meets the evidence standard each deduction actually demands — contemporaneous mileage logs, home-office measurement, Section 179 cost records — sets the retention clock, and assembles the minimum digital setup that makes the routine survivable.',
+    minutes: 13,
+    related: ['home-office-deduction-calculator', 'mileage-deduction-calculator'],
+  },
+  {
+    slug: 'saas-pricing-playbook',
+    title: 'Pricing a SaaS Product',
+    description:
+      'Price subscription software in three layers — a cost floor you compute, a value ceiling you argue, and competitor prices that only sanity-check the result — then treat every remaining choice as a separately priced decision: the billing term as financing, the discount ladder as 1 ÷ (1 − d), the raise as mechanics that hold the base, closed by the LTV:CAC band.',
+    minutes: 15,
+    related: ['ltv-cac-calculator', 'break-even-calculator', 'discount-impact-calculator'],
+  },
 ];
 
 /** href is derived, never hand-written — the trailing slash is guaranteed. */
