@@ -135,7 +135,7 @@ export default function RunwayArticle() {
         But that naive formula <em>understates</em> your runway when you are growing. Each month your
         MRR rises, your net burn shrinks, and the cash lasts longer than a flat-line projection
         would suggest. The calculator above runs a proper month-by-month simulation: it deducts that
-        month's net burn, then grows MRR for the next month, and repeats. On a fast-growing
+        month&apos;s net burn, then grows MRR for the next month, and repeats. On a fast-growing
         business this can extend your reported runway by 30–100% versus the simple division.
       </p>
 

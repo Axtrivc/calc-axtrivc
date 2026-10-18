@@ -46,7 +46,10 @@ export default function DiscountCalculator() {
   const unitLabel = monthly ? 'units per month' : 'units per year';
 
   const inputs: DiscountInputs = { price, unitCost, volume, discountPct };
-  const result = useMemo(() => computeDiscount(inputs), [price, unitCost, volume, discountPct]);
+  const result = useMemo(
+    () => computeDiscount({ price, unitCost, volume, discountPct }),
+    [price, unitCost, volume, discountPct],
+  );
   const coupon = useMemo(
     () => couponVsStraight(couponThreshold, couponOff, basket, discountPct),
     [couponThreshold, couponOff, basket, discountPct],
@@ -60,7 +63,7 @@ export default function DiscountCalculator() {
   const be = result.profitNeutralUpliftPct;
   const sweepMax = be === null ? 200 : Math.max(200, Math.ceil((be * 1.1) / 50) * 50);
   const sweep = useMemo(
-    () => responseSweep(inputs, sweepMax, 45),
+    () => responseSweep({ price, unitCost, volume, discountPct }, sweepMax, 45),
     [price, unitCost, volume, discountPct, sweepMax],
   );
 

@@ -181,11 +181,11 @@ export default function FreelanceArticle() {
       <h2 id="utilization">The billable-hours trap</h2>
       <p>
         The single biggest lever in this formula — and the one freelancers most consistently
-        overestimate — is <strong>billable hours per week</strong>. If you think you'll bill 35 hours
+        overestimate — is <strong>billable hours per week</strong>. If you think you&apos;ll bill 35 hours
         but actually bill 20, your real rate needs to be <strong>75% higher</strong> than your plan.
       </p>
       <p>
-        Here's where the missing hours typically go (illustrative planning ranges, not survey
+        Here&apos;s where the missing hours typically go (illustrative planning ranges, not survey
         data — audit your own calendar for the real split):
       </p>
       <table>
@@ -234,7 +234,7 @@ export default function FreelanceArticle() {
       </p>
       <p>
         Be honest in the calculator. If you set 25 billable hours and consistently bill 18, lower
-        the input and re-run the numbers — your required rate will rise, and that's information you
+        the input and re-run the numbers — your required rate will rise, and that&apos;s information you
         need before signing the next client.
       </p>
 
@@ -242,7 +242,7 @@ export default function FreelanceArticle() {
       <ol>
         <li>
           <strong>Increase billable utilization.</strong> The fastest path to a higher effective
-          rate isn't raising your number — it's spending less time on unpaid work. Productize your
+          rate isn&apos;t raising your number — it&apos;s spending less time on unpaid work. Productize your
           service, write templates for proposals, and fire low-margin clients who consume
           disproportionate admin time.
         </li>
@@ -257,7 +257,7 @@ export default function FreelanceArticle() {
           for the same hours.
         </li>
         <li>
-          <strong>Bundle expenses into the rate.</strong> Don't itemize software or hardware as
+          <strong>Bundle expenses into the rate.</strong> Don&apos;t itemize software or hardware as
           pass-throughs; roll them into your rate so clients see one clean number.
         </li>
         <li>

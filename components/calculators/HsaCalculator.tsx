@@ -127,7 +127,7 @@ export default function HsaCalculator() {
       0,
       50,
     ),
-    [contribution, coverage, age55, returnRate, years, medicalShare, forfeitShare],
+    [contribution, coverage, age55, marginalRate, returnRate, years, medicalShare, forfeitShare],
   );
 
   // A crisp 20%-penalty readout: cashing out one year's contribution.

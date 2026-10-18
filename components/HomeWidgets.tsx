@@ -720,7 +720,7 @@ export function EstimatedTaxMiniWidget() {
       <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
         Per quarter under the{' '}
         <span className="font-medium text-slate-600 dark:text-slate-300">{EST_HARBOR_LABEL[r.applicable]}</span> ·
-        year's tax{' '}
+        year&apos;s tax{' '}
         <AnimateNumber
           value={r.currentTotalTax}
           format={(n) => usd(n, 0)}

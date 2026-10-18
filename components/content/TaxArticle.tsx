@@ -190,7 +190,7 @@ export default function TaxArticle() {
       <h3>LLC (and other pass-through entities)</h3>
       <p>
         An LLC is a <strong>pass-through</strong> entity. The business itself pays no federal income
-        tax. Instead, all profit &ldquo;passes through&rdquo; to the owner's personal return, where it is
+        tax. Instead, all profit &ldquo;passes through&rdquo; to the owner&apos;s personal return, where it is
         taxed <strong>once</strong>. As the owner of an LLC taxed as a sole proprietorship (the
         default), you pay:
       </p>
@@ -303,7 +303,7 @@ export default function TaxArticle() {
         The LLC still wins — but only by <strong>{usd(WORKED_60K.delta, 0)}</strong>, a sliver set
         against the {usd(COMPARE_ROWS[4].r.delta, 0)} gap at $1M. The mechanism is the takeaway:
         while 79% of profit stays below the {usd(TAX_CONSTANTS.ltcg15Breakpoint, 0)} band top —
-        profit under about <strong>{usd(DIV_FREE_PROFIT, 0)}</strong> in this model's convention —
+        profit under about <strong>{usd(DIV_FREE_PROFIT, 0)}</strong> in this model&apos;s convention —
         a fully-distributed C-Corp pays exactly {pct(TAX_CONSTANTS.corporateRate * 100, 0)} and
         not a cent more. The &ldquo;double tax&rdquo; is only double once dividends climb past the
         0% band.
@@ -385,7 +385,7 @@ export default function TaxArticle() {
       <h3>Choose a C-Corp when…</h3>
       <ul>
         <li>
-          <strong>You're raising venture capital.</strong> VCs and institutional investors almost
+          <strong>You&apos;re raising venture capital.</strong> VCs and institutional investors almost
           universally require a C-Corp (preferred stock, familiar governance, clean cap table). An
           LLC routinely kills a term sheet.
         </li>
@@ -452,7 +452,7 @@ export default function TaxArticle() {
       <ul>
         <li>
           <strong>The profit crossover.</strong> Below about <strong>{usd(CROSSOVER, 0)}</strong> of
-          profit, the LLC's full stack — SE tax plus progressive brackets, with the 20% QBI
+          profit, the LLC&apos;s full stack — SE tax plus progressive brackets, with the 20% QBI
           deduction sheltering a fifth of the pass-through base — stays under the flat 21%.
           Above it, a C-Corp that distributes little wins on current-year tax.
         </li>

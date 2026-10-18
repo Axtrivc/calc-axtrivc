@@ -38,7 +38,7 @@ export default function LtvCacCalculator() {
   );
   const ltvDisc = useMemo(
     () => discountedLtv({ arpu, grossMarginPct, churnPct, smSpend, newCustomers }, discount),
-    [arpu, grossMarginPct, churnPct, discount],
+    [arpu, grossMarginPct, churnPct, smSpend, newCustomers, discount],
   );
   const sensitivity = useMemo(
     () => churnSensitivity({ arpu, grossMarginPct, churnPct, smSpend, newCustomers }),
@@ -48,7 +48,7 @@ export default function LtvCacCalculator() {
   // target implied by the acquisition cost (null when it cannot be crossed).
   const churnFor3x = useMemo(
     () => churnAtRatio({ arpu, grossMarginPct, churnPct, smSpend, newCustomers }, RATIO_HEALTHY),
-    [arpu, grossMarginPct, smSpend, newCustomers],
+    [arpu, grossMarginPct, churnPct, smSpend, newCustomers],
   );
   // Scan band — widened when the 3× crossing sits just beyond the default
   // right edge (within 1.5× of it) so the caption's critical point is visible

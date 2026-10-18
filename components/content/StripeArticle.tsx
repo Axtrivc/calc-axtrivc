@@ -30,9 +30,9 @@ export default function StripeArticle() {
       <p>
         The forward calculation is straightforward: enter the amount you plan to charge a customer,
         pick the transaction type (domestic card, international card, or ACH bank transfer), and the
-        tool returns three numbers — the fee, the net you'll receive, and the effective percentage
+        tool returns three numbers — the fee, the net you&apos;ll receive, and the effective percentage
         rate you actually paid. The effective rate matters because on small transactions the fixed
-        $0.30 dominates, so a $5 charge doesn't cost 2.9%, it costs closer to <strong>8.9%</strong>.
+        $0.30 dominates, so a $5 charge doesn&apos;t cost 2.9%, it costs closer to <strong>8.9%</strong>.
       </p>
 
       <h2 id="rates">Current Stripe processing rates (US)</h2>
@@ -177,7 +177,7 @@ export default function StripeArticle() {
 
       <h2 id="reverse">Reverse calculator: &ldquo;What should I charge to net X?&rdquo;</h2>
       <p>
-        The forward calculator tells you what you'll receive for a given charge. The reverse
+        The forward calculator tells you what you&apos;ll receive for a given charge. The reverse
         calculator answers the question every freelancer and consultant actually asks: <em>&ldquo;I
         want to keep exactly $2,000 — what do I bill?&rdquo;</em>
       </p>
@@ -206,7 +206,7 @@ export default function StripeArticle() {
       <ol>
         <li>
           <strong>Use ACH for invoices over $625.</strong> The $5 cap makes ACH dramatically cheaper
-          than cards on any meaningful amount. Stripe's own checkout, invoicing, and payment links
+          than cards on any meaningful amount. Stripe&apos;s own checkout, invoicing, and payment links
           all let you enable ACH as an option.
         </li>
         <li>
@@ -358,7 +358,7 @@ export default function StripeArticle() {
       </p>
 
       <h2 id="comparison">Stripe fee comparison table</h2>
-      <p>Here's what a $1,000 payment looks like under each method:</p>
+      <p>Here&apos;s what a $1,000 payment looks like under each method:</p>
       <table>
         <thead>
           <tr>

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
+  BookOpen,
   Calculator,
   Menu,
   X,
@@ -44,6 +45,9 @@ export default function Header() {
   const norm = (p: string) => (p.length > 1 ? p.replace(/\/+$/, '') : p);
   const current = norm(pathname ?? '/');
   const onToolPage = calculators.some((c) => current === norm(c.href));
+  // Guides live under /guides (index) and /guides/<slug>/ — prefix match covers
+  // both against the trailing-slash-normalized pathname.
+  const onGuidesPage = current === '/guides' || current.startsWith('/guides/');
 
   // Global ⌘K / Ctrl+K opens the command palette on any page.
   useEffect(() => {
@@ -185,6 +189,21 @@ export default function Header() {
               </AnimatePresence>
             </div>
 
+            {/* Guides — the knowledge-base index; one flat link, no dropdown
+                (ten decision playbooks, listed on the index itself). */}
+            <Link
+              href="/guides/"
+              aria-current={onGuidesPage ? 'page' : undefined}
+              className={`focus-calm inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                onGuidesPage
+                  ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/[0.06] dark:hover:text-slate-100'
+              }`}
+            >
+              <BookOpen className="h-4 w-4" aria-hidden="true" />
+              Guides
+            </Link>
+
             {/* ⌘K launcher */}
             <button
               type="button"
@@ -229,6 +248,19 @@ export default function Header() {
             className="max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-slate-200 bg-white md:hidden dark:border-white/[0.07] dark:bg-[#0e1628]"
           >
             <div className="container-page space-y-1 py-3">
+              <Link
+                href="/guides/"
+                onClick={() => setOpen(false)}
+                aria-current={onGuidesPage ? 'page' : undefined}
+                className={`focus-calm flex items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium transition ${
+                  onGuidesPage
+                    ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300'
+                    : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/[0.06]'
+                }`}
+              >
+                <BookOpen className="h-4 w-4 shrink-0" aria-hidden="true" />
+                Guides
+              </Link>
               {orderedCalculators.map((c) => {
                 const isActive = current === norm(c.href);
                 return (

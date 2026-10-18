@@ -217,7 +217,7 @@ export function WorkflowChain({ currentSlug }: { currentSlug: string }) {
           One financial workflow, {calculators.length} instruments
         </h2>
         <p className="mt-3 leading-relaxed text-slate-600 dark:text-slate-300">
-          Each tool answers one question in the life of an independent business. When you're done
+          Each tool answers one question in the life of an independent business. When you&apos;re done
           here, the next decision has a workspace waiting for it.
         </p>
       </header>

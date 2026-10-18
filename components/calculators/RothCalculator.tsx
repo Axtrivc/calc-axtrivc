@@ -68,20 +68,20 @@ export default function RothCalculator() {
     recordRecent(SLUG);
   }, []);
 
-  const input: RothInput = {
-    currentRatePct: currentRate,
-    retirementRatePct: retireRate,
-    annualContribution: contribution,
-    years,
-    annualReturnPct: ret,
-  };
-
-  const result = useMemo(() => compareRoth(input), [currentRate, retireRate, contribution, years, ret]);
-  const sweep = useMemo(
-    () => retirementRateSweep(input, 0, 50, 50),
+  const input = useMemo<RothInput>(
+    () => ({
+      currentRatePct: currentRate,
+      retirementRatePct: retireRate,
+      annualContribution: contribution,
+      years,
+      annualReturnPct: ret,
+    }),
     [currentRate, retireRate, contribution, years, ret],
   );
-  const horizons = useMemo(() => horizonSweep(input, [10, 20, 30, 40]), [currentRate, retireRate, contribution, ret]);
+
+  const result = useMemo(() => compareRoth(input), [input]);
+  const sweep = useMemo(() => retirementRateSweep(input, 0, 50, 50), [input]);
+  const horizons = useMemo(() => horizonSweep(input, [10, 20, 30, 40]), [input]);
 
   const limit = contributionLimit(accountType, age);
   const overLimit = contribution > limit.total + 0.5;
