@@ -214,7 +214,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
                 aria-controls="command-palette-results"
                 aria-activedescendant={filtered[active] ? `command-option-${filtered[active].id}` : undefined}
                 autoComplete="off"
-                className="w-full bg-transparent text-base text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none"
+                className="w-full bg-transparent text-base text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-hidden"
               />
               <kbd className="hidden shrink-0 rounded-md border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.03] px-1.5 py-0.5 font-mono text-[10px] font-medium text-slate-500 dark:text-slate-400 sm:block">
                 ESC

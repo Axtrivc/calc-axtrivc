@@ -241,7 +241,7 @@ export default function SafeNoteCalculator() {
                   type="button"
                   onClick={() => applyPreset(p)}
                   aria-pressed={active}
-                  className={`rounded-xl border p-3 text-left transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-indigo-400 dark:focus-visible:ring-offset-slate-950 ${
+                  className={`rounded-xl border p-3 text-left transition duration-150 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-indigo-400 dark:focus-visible:ring-offset-slate-950 ${
                     active
                       ? 'border-indigo-500 bg-indigo-50/80 ring-1 ring-indigo-500/25 dark:border-indigo-400 dark:bg-indigo-500/10 dark:ring-indigo-400/25'
                       : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow-sm dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-indigo-400/40'

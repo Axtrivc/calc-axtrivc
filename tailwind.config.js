@@ -8,6 +8,16 @@ module.exports = {
   ],
   theme: {
     extend: {
+      /* v4 renamed the shadow scale (old shadow-sm -> shadow-xs, old shadow -> shadow-sm).
+         Pin the two v3 values this codebase was designed against so every shadow-sm /
+         shadow utility renders identically under v4. shadow-md and up are unchanged. */
+      boxShadow: {
+        sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+      },
+      /* v4 rounded-sm became 0.25rem (the old rounded); pin the v3 0.125rem the
+         focus-calm link corners were designed against. */
+      borderRadius: { sm: '0.125rem' },
       colors: {
         brand: {
           50: '#eef2ff',

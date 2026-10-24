@@ -763,7 +763,7 @@ function CashChart({ r }: { r: RunwayResult }) {
               aria-label={`Month ${p.month}: cash ${usdCompact(p.cash)}, MRR ${usdCompact(
                 p.mrr
               )}, net burn ${usdCompact(p.netBurn)}`}
-              className="group relative flex min-w-[10px] flex-1 cursor-default flex-col items-center justify-end rounded-t outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
+              className="group relative flex min-w-[10px] flex-1 cursor-default flex-col items-center justify-end rounded-t outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
               style={{ height: '100%' }}
             >
               <div

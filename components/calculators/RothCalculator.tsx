@@ -143,7 +143,7 @@ export default function RothCalculator() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => set('account', opt.key)}
-                  className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-indigo-400 dark:focus-visible:ring-offset-slate-950 ${
+                  className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition duration-150 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-indigo-400 dark:focus-visible:ring-offset-slate-950 ${
                     active
                       ? 'border-indigo-500 bg-indigo-50 text-indigo-700 dark:border-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-300'
                       : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-700 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-300 dark:hover:border-indigo-400/50 dark:hover:text-indigo-300'
@@ -171,7 +171,7 @@ export default function RothCalculator() {
                 onClick={() => {
                   (Object.keys(s.values) as (keyof typeof DEFAULTS)[]).forEach((k) => set(k, s.values[k]));
                 }}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-left transition duration-150 hover:border-indigo-300 hover:bg-indigo-50/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-indigo-400/50 dark:hover:bg-indigo-500/10 dark:focus-visible:ring-indigo-400 dark:focus-visible:ring-offset-slate-950"
+                className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-left transition duration-150 hover:border-indigo-300 hover:bg-indigo-50/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-indigo-400/50 dark:hover:bg-indigo-500/10 dark:focus-visible:ring-indigo-400 dark:focus-visible:ring-offset-slate-950"
               >
                 <span className="block text-sm font-semibold text-slate-700 dark:text-slate-200">{s.label}</span>
                 <span className="readout mt-0.5 block text-[11px] text-slate-500 dark:text-slate-400">{s.detail}</span>

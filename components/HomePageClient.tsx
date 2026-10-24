@@ -325,7 +325,7 @@ export default function HomePageClient() {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search calculators…"
                   aria-label="Search calculators"
-                  className="block w-full rounded-xl border border-white/80 bg-white/70 px-11 py-3 text-base text-slate-900 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-xl transition focus-within:border-indigo-300 focus-within:outline-none focus-within:ring-4 focus-within:ring-indigo-500/10 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-100 dark:shadow-none dark:focus-within:border-indigo-400/60 dark:focus-within:ring-indigo-400/15"
+                  className="block w-full rounded-xl border border-white/80 bg-white/70 px-11 py-3 text-base text-slate-900 shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-xl transition focus-within:border-indigo-300 focus-within:outline-hidden focus-within:ring-4 focus-within:ring-indigo-500/10 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-100 dark:shadow-none dark:focus-within:border-indigo-400/60 dark:focus-within:ring-indigo-400/15"
                 />
               </div>
             </motion.div>
